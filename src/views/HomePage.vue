@@ -12,23 +12,25 @@
       </div>
       <div class="row">
         <div class="col-md-6 q-div">
-          <div class="question">
-            <h1>
-              К какой категории <br />
-              вы относитесь?
-            </h1>
-          </div>
-          <div class="actions mt-3">
-            <router-link to="/partners" class="">
-              <button class="btn btn-lg">Владелец зала / Тренер</button>
-            </router-link>
-            <router-link to="/partners">
-              <button class="btn btn-lg mt-3">Атлет</button>
-            </router-link>
+          <div class="q-wrapper">
+            <div class="question">
+              <h1>
+                К какой категории <br />
+                вы относитесь?
+              </h1>
+            </div>
+            <div class="actions mt-3">
+              <router-link to="/partners" class="">
+                <button class="">Владелец зала / Тренер</button>
+              </router-link>
+              <router-link to="/clients">
+                <button class="mt-3">Атлет</button>
+              </router-link>
+            </div>
           </div>
         </div>
         <div class="col-md-6">
-          <div class="man-image">
+          <div class="man-image float-end">
             <img src="../assets/Sportsman.png" alt="" />
           </div>
         </div>
@@ -47,8 +49,8 @@ section {
   overflow-x: hidden;
 }
 .first-circle {
-  width: 673px;
-  height: 672px;
+  width: 700px;
+  height: 700px;
   position: absolute;
   right: -10%;
   top: -15%;
@@ -62,8 +64,8 @@ section {
   z-index: -1;
 }
 .second-circle {
-  width: 600px;
-  height: 600px;
+  width: 650px;
+  height: 650px;
   position: absolute;
   right: -10%;
   top: -15%;
@@ -76,7 +78,11 @@ section {
   width: 112px;
 }
 .man-image {
-  width: 600px;
+  width: 580px;
+}
+.man-image img {
+  position: relative;
+  left: 20%;
 }
 img {
   width: 100%;
@@ -91,21 +97,26 @@ img {
 .actions {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  /* align-items: center; */
 }
 h1 {
-  color: var(--primary-color);
+  color: #1b1b1d;
   font-weight: 600;
 }
 button {
-  width: 357px;
+  width: 300px;
   height: 70px;
   font-size: 16px;
   color: #fff;
+  font-weight: bold;
   border: none;
   border-radius: 50px;
   background: linear-gradient(180deg, #00ccff -107.29%, #003cbf 228.65%);
-
   box-shadow: 0px 0px 25px rgba(1, 107, 212, 0.25);
+  transition: all 0.5s ease-in;
+}
+button:hover {
+  color: #fff;
+  background: linear-gradient(180deg, #00ccff -107.29%, #003cbf 102.56%);
 }
 </style>
