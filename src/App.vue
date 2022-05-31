@@ -8,4 +8,15 @@ export default {
 };
 </script>
 
-<style src="./css/main.css"></style>
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap");
+
+:root {
+  --linear-color: linear-gradient(to bottom#00CCFF, #003cbf);
+  --primary-color: #016bd4;
+  --black-color: #444;
+}
+* {
+  font-family: "Inter", sans-serif;
+}
+</style>
