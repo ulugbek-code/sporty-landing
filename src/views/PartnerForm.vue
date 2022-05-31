@@ -29,7 +29,7 @@ export default {};
 </script>
 
 <style scoped>
-/* .row * {
+.row * {
   padding: 0;
 }
 .header-form {
@@ -48,5 +48,5 @@ img {
 }
 .content-header p {
   color: #9d9d9d;
-} */
+}
 </style>
