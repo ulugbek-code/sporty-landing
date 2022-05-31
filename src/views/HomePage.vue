@@ -44,7 +44,7 @@ export default {};
 </script>
 
 <style scoped>
-/* section {
+section {
   position: relative;
   overflow-x: hidden;
 }
@@ -116,5 +116,5 @@ button {
 button:hover {
   color: #fff;
   background: linear-gradient(180deg, #00ccff -107.29%, #003cbf 102.56%);
-} */
+}
 </style>
