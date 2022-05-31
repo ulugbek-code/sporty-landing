@@ -3,7 +3,7 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-3">
-          <img src="../assets/blue-frame.png" alt="" />
+          <img src="../assets/LeftBar.png" alt="" />
         </div>
         <div class="col-md-9 px-5 pt-4">
           <div class="header-form">
@@ -14,7 +14,9 @@
               <h2>Станьте нашим партнером</h2>
               <p>Вы только заполняете форму, мы привлекаем клиентов</p>
             </div>
-            <form @submit.prevent></form>
+            <form @submit.prevent>
+              <h4>Регистрация зала</h4>
+            </form>
           </div>
         </div>
       </div>
