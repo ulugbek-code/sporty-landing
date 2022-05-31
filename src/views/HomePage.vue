@@ -6,7 +6,7 @@
       <div class="row py-4">
         <div class="col-12">
           <div class="logo_detail">
-            <img src="../assets/SportyLogo.svg" alt="" />
+            <img src="../assets/sporty-logo.svg" alt="" />
           </div>
         </div>
       </div>
@@ -31,7 +31,7 @@
         </div>
         <div class="col-md-6">
           <div class="man-image float-end">
-            <img src="../assets/Sportsman.png" alt="" />
+            <img src="../assets/sports-man.png" alt="" />
           </div>
         </div>
       </div>

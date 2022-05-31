@@ -3,11 +3,11 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-3">
-          <img src="../assets/LeftBar.png" alt="" />
+          <img src="../assets/left-bar.png" alt="" />
         </div>
         <div class="col-md-9 px-5 pt-4">
           <div class="header-form">
-            <img src="../assets/SportyLogo.svg" alt="" />
+            <img src="../assets/sporty-logo.svg" alt="" />
           </div>
           <div class="content-form">
             <div class="content-header">
