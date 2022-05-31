@@ -44,7 +44,7 @@ export default {};
 </script>
 
 <style scoped>
-section {
+/* section {
   position: relative;
   overflow-x: hidden;
 }
@@ -97,7 +97,6 @@ img {
 .actions {
   display: flex;
   flex-direction: column;
-  /* align-items: center; */
 }
 h1 {
   color: #1b1b1d;
@@ -113,10 +112,9 @@ button {
   border-radius: 50px;
   background: linear-gradient(180deg, #00ccff -107.29%, #003cbf 228.65%);
   box-shadow: 0px 0px 25px rgba(1, 107, 212, 0.25);
-  transition: all 0.5s ease-in;
 }
 button:hover {
   color: #fff;
   background: linear-gradient(180deg, #00ccff -107.29%, #003cbf 102.56%);
-}
+} */
 </style>
