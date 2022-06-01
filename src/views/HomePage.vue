@@ -117,4 +117,34 @@ button:hover {
   color: #fff;
   background: linear-gradient(180deg, #00ccff -107.29%, #003cbf 102.56%);
 }
+@media screen and (max-width: 1112px) {
+  .first-circle {
+    width: 600px;
+    height: 600px;
+  }
+  .second-circle {
+    width: 550px;
+    height: 550px;
+  }
+  .man-image {
+    width: 520px;
+  }
+  button {
+    width: 250px;
+    height: 50px;
+  }
+}
+@media screen and (max-width: 768px) {
+  .first-circle {
+    width: 300px;
+    height: 300px;
+  }
+  .second-circle {
+    width: 250px;
+    height: 250px;
+  }
+  .man-image {
+    display: none;
+  }
+}
 </style>

@@ -14,4 +14,8 @@ export default {
 body {
   font-family: "Inter", sans-serif;
 }
+.custom_hr {
+  border: 1px solid #dee2e6;
+  width: 150%;
+}
 </style>
