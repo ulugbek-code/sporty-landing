@@ -18,13 +18,10 @@
               <div class="input-group justify-content-between mb-3">
                 <div class="gender-wrapper">
                   <label class="mb-1">Ваш пол</label>
-                  <select class="form-select">
-                    <option value="" disabled selected hidden>
-                      Не выбрано
-                    </option>
-                    <option value="1">Мужской</option>
-                    <option value="1">Женский</option>
-                  </select>
+                  <base-drop-down
+                    :options="['Мужской', 'Женский']"
+                    default="Не выбрано"
+                  ></base-drop-down>
                 </div>
                 <div class="gender-wrapper">
                   <label class="mb-1">Дата рождения</label>
@@ -56,62 +53,49 @@
                 </div>
               </div>
               <p class="fw-bold mb-2">Ваш город</p>
-              <div class="input-group mb-3">
-                <select class="form-select">
-                  <option value="" disabled selected hidden>Не выбрано</option>
-                  <option value="city" v-for="city in cities" :key="city">
-                    {{ city }}
-                  </option>
-                </select>
+              <div v-if="userQuestions.length" class="input-group mb-3">
+                <base-drop-down
+                  :options="userQuestions[0].variants"
+                  :withObj="true"
+                  default="Не выбрано"
+                ></base-drop-down>
               </div>
               <p class="fw-bold mb-2">
                 Ваши предпочитаемые виды занятия спортом
               </p>
-              <div class="input-group mb-3">
-                <select class="form-select">
-                  <option value="" disabled selected hidden>Не выбрано</option>
-                  <option value="sport" v-for="sport in favSports" :key="sport">
-                    {{ sport }}
-                  </option>
-                </select>
+              <div v-if="userQuestions.length" class="input-group mb-3">
+                <base-drop-down
+                  :options="userQuestions[1].variants"
+                  :multiselect="true"
+                  default="Не выбрано"
+                ></base-drop-down>
               </div>
               <p class="fw-bold mb-2">Как часто вы упражняетесь?</p>
-              <div class="input-group mb-3">
-                <select class="form-select">
-                  <option value="" disabled selected hidden>Не выбрано</option>
-                  <option
-                    value="freq"
-                    v-for="freq in sportFrequency"
-                    :key="freq"
-                  >
-                    {{ freq }}
-                  </option>
-                </select>
+              <div v-if="userQuestions.length" class="input-group mb-3">
+                <base-drop-down
+                  :options="userQuestions[2].variants"
+                  :withObj="true"
+                  default="Не выбрано"
+                ></base-drop-down>
               </div>
               <p class="fw-bold mb-2">
                 Сколько времени вы проводите за упражнениями?
               </p>
-              <div class="input-group mb-3">
-                <select class="form-select">
-                  <option value="" disabled selected hidden>Не выбрано</option>
-                  <option
-                    value="perTimeSpent"
-                    v-for="perTimeSpent in sportTimeSpent"
-                    :key="perTimeSpent"
-                  >
-                    {{ perTimeSpent }}
-                  </option>
-                </select>
+              <div v-if="userQuestions.length" class="input-group mb-3">
+                <base-drop-down
+                  :options="userQuestions[3].variants"
+                  :withObj="true"
+                  default="Не выбрано"
+                ></base-drop-down>
               </div>
               <p class="fw-bold mb-2">
                 Покупаете ли вы абонимент в спортзал или другие занятия?
               </p>
               <div class="input-group mb-3">
-                <select class="form-select">
-                  <option value="" disabled selected hidden>Не выбрано</option>
-                  <option value="Да">Да</option>
-                  <option value="Нет">Нет</option>
-                </select>
+                <base-drop-down
+                  :options="['Да', 'Нет']"
+                  default="Не выбрано"
+                ></base-drop-down>
               </div>
               <p class="fw-bold mb-2">
                 Сколько вы тратите на упражнения в месяц?
@@ -141,26 +125,20 @@
                 эти секции?
               </p>
               <div class="input-group mb-3">
-                <select class="form-select">
-                  <option value="" disabled selected hidden>Не выбрано</option>
-                  <option value="Да">Да</option>
-                  <option value="Нет">Нет</option>
-                </select>
+                <base-drop-down
+                  :options="['Да', 'Нет']"
+                  default="Не выбрано"
+                ></base-drop-down>
               </div>
               <p class="fw-bold mb-2">
                 Какие удобства для вас важны в спортивных секциях/залах?
               </p>
-              <div class="input-group mb-3">
-                <select class="form-select">
-                  <option value="" disabled selected hidden>Не выбрано</option>
-                  <option
-                    value="amenity"
-                    v-for="amenity in amenities"
-                    :key="amenity"
-                  >
-                    {{ amenity }}
-                  </option>
-                </select>
+              <div v-if="userQuestions.length" class="input-group mb-3">
+                <base-drop-down
+                  :options="userQuestions[6].variants"
+                  :multiselect="true"
+                  default="Не выбрано"
+                ></base-drop-down>
               </div>
               <p class="fw-bold mb-2">
                 Оставьте свой номер телефона и мы вас уведомим как только найдем
@@ -194,74 +172,18 @@
 <script>
 export default {
   data() {
-    return {
-      cities: [
-        "Ташкент",
-        "Ташкентская область",
-        "Андижанская область",
-        "Бухарская область",
-        "Джизакская область",
-        "Кашкадарьинская область",
-        "Навоийская область",
-        "Наманганская область",
-        "Самаркандская область",
-        "Сурхандарьинская область",
-        "Сырдарьинская область",
-        "Ферганская область",
-        "Хорезмская область",
-        "Республика Каракалпакстан",
-      ],
-      favSports: [
-        "Тренажерный зал",
-        "Занятия в бассейне",
-        "Функциональный тренинг",
-        "EMS",
-        "Йога",
-        "Стретчинг и Пилатес",
-        "Занятия бегом",
-        "Танцы",
-        "Боевые искусства",
-        "Теннис",
-        "Балет",
-        "Скалолазание",
-        "Интенсивные тренировки",
-        "Горный туризм",
-        "Индивидуальные занятия",
-        "Восстановительные процедуры",
-        "Анализ и диагностика",
-        "Тренировки на открытом воздухе",
-        "Аренда спортивного оборудования",
-        "Командные виды спорта",
-      ],
-      sportFrequency: [
-        "Каждый день",
-        "1 раз в неделю",
-        "2-3 раза в неделю",
-        "4+ раза в неделю",
-        "1 раз в месяц",
-        "Не упражняюсь",
-      ],
-      sportTimeSpent: [
-        "0 часов",
-        "1 час и меньше",
-        "До 2х часов",
-        "До 3х часов",
-        "До 4х часов",
-        "До 5ти часов",
-        "Больше 5 часов",
-      ],
-      amenities: [
-        "Парковка",
-        "Бесплатный Wi-Fi",
-        "Душ",
-        "Сауна",
-        "Фито-бар",
-        "Питьевая вода",
-        "Можно с ребенком",
-        "Рядом с метро",
-        "Бесплатные полотенца",
-      ],
-    };
+    return {};
+  },
+  computed: {
+    allQuestions() {
+      return this.$store.getters.questions;
+    },
+    userQuestions() {
+      return this.allQuestions.filter((question) => question.status === "user");
+    },
+  },
+  async created() {
+    await this.$store.dispatch("getQuestions");
   },
 };
 </script>
@@ -326,11 +248,7 @@ label {
 ::-webkit-calendar-picker-indicator {
   filter: invert(0.5);
 }
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
+
 @media screen and (max-width: 1200px) {
   .content-form {
     width: 100%;

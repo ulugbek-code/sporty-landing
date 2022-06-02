@@ -1,5 +1,7 @@
 <template>
   <section>
+    <!-- {{ lat }}-{{ lng }}
+    <div ref="mapDiv" style="width: 100%; height: 80vh" /> -->
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-3 d-none d-md-block">
@@ -32,6 +34,8 @@
                   />+998</span
                 >
                 <input
+                  v-model="phoneNumber"
+                  @input="formatPhoneNumber()"
                   type="tel"
                   class="form-control"
                   placeholder="Номер телефона"
@@ -41,18 +45,16 @@
                 <div class="d-flex justify-content-between address-wrapper">
                   <p class="py-2 fw-bold">Часы работы зала</p>
                   <div>
-                    <div
-                      class="d-flex align-items-center fw-bold border p-2 custom_date mb-2"
-                    >
-                      <p class="border-end my-0 px-2">Пн - СБ</p>
-                      <p class="my-0 mx-2">09:00 - 23:00</p>
-                      <span class="triangle mx-2"></span>
-                    </div>
+                    <template v-for="gym in gymHoursOpeningQty" :key="gym">
+                      <gym-opening-hours
+                        @minusDate="updateGymQty"
+                        :qty="gym"
+                      ></gym-opening-hours>
+                    </template>
                   </div>
                 </div>
-
                 <div class="same-btn-wrapper">
-                  <button class="btn btn-more p-2 px-4">
+                  <button @click="addGymHours" class="btn btn-more p-2 px-4">
                     Добавить еще часы
                   </button>
                 </div>
@@ -79,109 +81,26 @@
               </div>
               <div class="mb-3">
                 <p class="fw-bold mb-2">Удобства</p>
-                <select class="form-select">
-                  <option value="" disabled selected hidden>Не выбрано</option>
-                  <option
-                    value="amenity"
-                    v-for="amenity in amenities"
-                    :key="amenity"
-                  >
-                    {{ amenity }}
-                  </option>
-                </select>
+                <base-drop-down
+                  :options="amenities"
+                  :multiselect="true"
+                  default="Не выбрано"
+                ></base-drop-down>
               </div>
               <hr class="mt-5 mb-5 custom_hr" />
-              <h4 class="mt-4 mb-3">Регистрация секции</h4>
+              <template v-if="partnerQuestions.length">
+                <template v-for="eaachClass in classesQty" :key="eaachClass">
+                  <dynamic-classes
+                    :each="eaachClass"
+                    :sections="partnerQuestions[0].variants"
+                    @deleteClass="updateClass"
+                  ></dynamic-classes>
+                </template>
+              </template>
               <div class="input-group mb-3">
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="Название секции (например: йога, плавание, бодибилдинг)"
-                />
-              </div>
-              <div class="input-group mb-3">
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="Имя Фамилия тренера"
-                />
-              </div>
-              <p class="mb-2 photo-header">Фотографии секции</p>
-              <div class="d-flex justify-content-between mb-3">
-                <div class="dropbox">
-                  <input
-                    class="input-file"
-                    type="file"
-                    ref="file"
-                    @change="handleFileUpload"
-                  />
-                  <span class="icon">+</span>
-                </div>
-                <div class="dropbox">
-                  <input
-                    class="input-file"
-                    type="file"
-                    ref="file"
-                    @change="handleFileUpload"
-                  />
-                  <span class="icon">+</span>
-                </div>
-                <div class="dropbox">
-                  <input
-                    class="input-file"
-                    type="file"
-                    ref="file"
-                    @change="handleFileUpload"
-                  />
-                  <span class="icon">+</span>
-                </div>
-                <div class="dropbox">
-                  <input
-                    class="input-file"
-                    type="file"
-                    ref="file"
-                    @change="handleFileUpload"
-                  />
-                  <span class="icon">+</span>
-                </div>
-                <div class="dropbox">
-                  <input
-                    class="input-file"
-                    type="file"
-                    ref="file"
-                    @change="handleFileUpload"
-                  />
-                  <span class="icon">+</span>
-                </div>
-                <div class="dropbox">
-                  <input
-                    class="input-file"
-                    type="file"
-                    ref="file"
-                    @change="handleFileUpload"
-                  />
-                  <span class="icon">+</span>
-                </div>
-              </div>
-              <div class="input-group mb-3">
-                <button class="btn btn-map" style="width: 40%">
-                  Добавить видео
+                <button @click="addClass" class="btn btn-more p-4">
+                  Добавить еще секцию
                 </button>
-              </div>
-              <div class="input-group mb-3">
-                <textarea
-                  class="form-control"
-                  rows="3"
-                  placeholder="Описание секции"
-                ></textarea>
-              </div>
-              <div class="input-group mb-3">
-                <button class="btn btn-map" style="width: 40%">
-                  Добавить расписание
-                </button>
-              </div>
-              <div class="input-group mb-3">
-                <button class="btn btn-more p-4">Добавить еще часы</button>
               </div>
               <div class="d-flex align-items-center my-5">
                 <input type="checkbox" id="confirm" />
@@ -201,29 +120,100 @@
 </template>
 
 <script>
+import GymOpeningHours from "../components/partners/GymOpeningHours.vue";
+import DynamicClasses from "../components/partners/DynamicClasses.vue";
+// const API_KEY = "AIzaSyA5OFgEXYMwjaxzKJxfyyleOcmnpEKXtmo";
 export default {
+  components: {
+    GymOpeningHours,
+    DynamicClasses,
+  },
   data() {
     return {
+      // loader: new Loader({ apiKey: API_KEY }),
+      // otherPos: null,
+      // map: null,
+      // watcher: null,
+      // coords: { latitude: 0, longitude: 0 },
+      // isSupported: "navigator" in window && "geolocation" in navigator,
+      phoneNumber: "",
+      gymHoursOpeningQty: [1],
+      classesQty: [1],
       fileName: "",
-      amenities: [
-        "Парковка",
-        "Бесплатный Wi-Fi",
-        "Душ",
-        "Сауна",
-        "Фито-бар",
-        "Питьевая вода",
-        "Можно с ребенком",
-        "Рядом с метро",
-        "Бесплатные полотенца",
-      ],
     };
   },
+  computed: {
+    allQuestions() {
+      return this.$store.getters.questions;
+    },
+    partnerQuestions() {
+      return this.allQuestions.filter(
+        (question) => question.status === "partner"
+      );
+    },
+    // lat() {
+    //   return this.coords.latitude;
+    // },
+    // lng() {
+    //   return this.coords.longitude;
+    // },
+  },
   methods: {
+    formatPhoneNumber() {
+      let x = this.phoneNumber
+        .replace(/\D/g, "")
+        .match(/(\d{0,2})(\d{0,3})(\d{0,4})/);
+      this.phoneNumber = !x[2]
+        ? x[1]
+        : "(" + x[1] + ") " + x[2] + (x[3] ? "-" + x[3] : "");
+      if (this.phoneNumber.length > 11) {
+        this.phoneNumber =
+          this.phoneNumber.substring(0, 11) +
+          "-" +
+          this.phoneNumber.substring(11);
+      }
+    },
+    updateGymQty(val) {
+      if (this.gymHoursOpeningQty.length > 1)
+        this.gymHoursOpeningQty = this.gymHoursOpeningQty.filter(
+          (hour) => hour !== val
+        );
+    },
+    addGymHours() {
+      this.gymHoursOpeningQty.push(
+        this.gymHoursOpeningQty[this.gymHoursOpeningQty.length - 1] + 1
+      );
+    },
+    addClass() {
+      this.classesQty.push(this.classesQty[this.classesQty.length - 1] + 1);
+    },
+    updateClass(val) {
+      if (this.classesQty.length > 1)
+        this.classesQty = this.classesQty.filter((hour) => hour !== val);
+    },
+
     handleFileUpload() {
-      // console.log(this.$refs.file.files[0].name);
       this.fileName = this.$refs.file.files[0].name;
     },
   },
+  async created() {
+    await this.$store.dispatch("getQuestions");
+  },
+  mounted() {
+    // if (this.isSupported) {
+    //   this.watcher = navigator.geolocation.watchPosition(
+    //     (position) => (this.coords = position.coords)
+    //   );
+    // }
+    // await this.loader.load();
+    // this.map = new google.maps.Map(this.$refs.mapDiv, {
+    //   center: { lat: parseInt(this.lat), lng: parseInt(this.lng) },
+    //   zoom: 9,
+    // });
+  },
+  // unmounted() {
+  //   if (this.watcher) navigator.geolocation.clearWatch(this.watcher);
+  // },
 };
 </script>
 
@@ -242,12 +232,13 @@ img {
   height: 100%;
 }
 .content-form {
-  width: 65%;
+  width: 70%;
 }
 .content-header h2 {
   font-weight: bold;
   margin-bottom: 5px;
 }
+
 .content-header p {
   color: #9d9d9d;
 }
@@ -295,13 +286,7 @@ textarea::placeholder,
   font-size: 14px;
   color: #9d9d9d;
 }
-.triangle {
-  width: 0;
-  height: 0;
-  border-left: 6px solid transparent;
-  border-right: 6px solid transparent;
-  border-top: 6px solid #016bd4;
-}
+
 .address-wrapper {
   width: 65%;
 }
@@ -320,10 +305,15 @@ textarea::placeholder,
   width: 16px;
   height: 16px;
   margin-right: 15px;
+  cursor: pointer;
 }
 label {
   font-size: 15px;
   color: #1b1b1d;
+  transition: all 0.2s ease;
+}
+#confirm:checked + label {
+  color: #016bd4;
 }
 /*  */
 .dropbox {
@@ -355,6 +345,9 @@ label {
   transform: translate(-50%, -50%);
   color: #d9d9d9;
   pointer-events: none;
+}
+.btn-more:active {
+  background: #d9d9d9;
 }
 @media screen and (max-width: 1200px) {
   .content-form {
