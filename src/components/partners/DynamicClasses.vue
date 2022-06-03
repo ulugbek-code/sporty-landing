@@ -15,7 +15,7 @@
       v-model.lazy="className"
       type="text"
       class="form-control border"
-      :class="isEmpty && !className ? 'border-danger' : ''"
+      :class="isError && !className ? 'border-danger' : ''"
       placeholder="Название секции (например: йога, плавание, бодибилдинг)"
     />
   </div>
@@ -24,7 +24,7 @@
       v-model.lazy="teacherName"
       type="text"
       class="form-control border"
-      :class="isEmpty && !teacherName ? 'border-danger' : ''"
+      :class="isError && !teacherName ? 'border-danger' : ''"
       placeholder="Имя Фамилия тренера"
     />
   </div>
@@ -34,7 +34,7 @@
       :options="sections"
       :multiselect="true"
       @multi="getFacilities"
-      :isError="isEmpty"
+      :isError="isError"
       default="Не выбрано"
     ></base-drop-down>
   </div>
@@ -46,6 +46,7 @@
         { id: 'group', name: 'Групповые' },
       ]"
       @input="getTrainType"
+      :isError="isError"
       default="Не выбрано"
     ></base-drop-down>
   </div>
@@ -57,6 +58,7 @@
         { id: 'teenager', name: 'Для детей' },
       ]"
       @input="getAge"
+      :isError="isError"
       default="Не выбрано"
     ></base-drop-down>
   </div>
@@ -67,7 +69,7 @@
       type="number"
       min="0"
       class="form-control border"
-      :class="isEmpty && !visits ? 'border-danger' : ''"
+      :class="isError && !visits ? 'border-danger' : ''"
       placeholder="Введите количество посещений"
     />
   </div>
@@ -77,7 +79,7 @@
       type="number"
       min="0"
       class="form-control border"
-      :class="isEmpty && !price ? 'border-danger' : ''"
+      :class="isError && !price ? 'border-danger' : ''"
       placeholder="Стоимость абонимента"
     />
     <span class="input-group-text">СУМ</span>
@@ -125,7 +127,7 @@
     <textarea
       v-model.lazy="classDesc"
       class="form-control border"
-      :class="isEmpty && !classDesc ? 'border-danger' : ''"
+      :class="isError && !classDesc ? 'border-danger' : ''"
       rows="3"
       placeholder="Описание секции"
     ></textarea>
@@ -136,7 +138,7 @@
 import ImageUpload from "./ImageUpload.vue";
 import ClassDate from "./ClassDate.vue";
 export default {
-  props: ["each", "sections"],
+  props: ["each", "sections", "isError"],
   emits: ["deleteClass", "changeImg", "changeVid", "updateValues"],
   components: {
     ImageUpload,
@@ -363,8 +365,8 @@ label {
   font-size: 15px;
   color: #1b1b1d;
 }
-input.border-danger,
-textarea.border-danger {
+input.border-danger::placeholder,
+textarea.border-danger::placeholder {
   color: #dc3545;
 }
 

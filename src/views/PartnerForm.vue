@@ -72,9 +72,9 @@
                   />
                 </div>
 
-                <div class="same-btn-wrapper">
+                <!-- <div class="same-btn-wrapper">
                   <button class="btn btn-map">Указать на карте</button>
-                </div>
+                </div> -->
               </div>
               <div class="input-group mb-3">
                 <textarea
@@ -90,6 +90,7 @@
                 <base-drop-down
                   :options="allQuestions[6].variants"
                   @multi="getFac"
+                  :isError="isEmpty"
                   :multiselect="true"
                   default="Не выбрано"
                 ></base-drop-down>
@@ -100,6 +101,7 @@
                   <dynamic-classes
                     :each="eaachClass"
                     :sections="partnerQuestions[0].variants"
+                    :isError="isEmpty"
                     @deleteClass="updateClass"
                     @changeImg="updateImg"
                     @changeVid="updateVid"
@@ -107,21 +109,18 @@
                   ></dynamic-classes>
                 </template>
               </template>
-              <div class="input-group mb-3">
+              <!-- <div class="input-group mb-3">
                 <button @click="addClass" class="btn btn-more p-4">
                   Добавить еще секцию
                 </button>
-              </div>
+              </div> -->
               <div class="d-flex align-items-center my-5">
-                <input
-                  v-model="isConfirm"
-                  type="checkbox"
-                  class="border"
-                  :class="isEmpty && !isConfirm ? 'border-danger' : ''"
-                  id="confirm"
-                />
-                <label for="confirm"
-                  >Я подтверждаю правильность заполненной информации</label
+                <input v-model="isConfirm" type="checkbox" id="confirm" />
+                <label
+                  for="confirm"
+                  :class="isEmpty && !isConfirm ? 'text-danger' : ''"
+                >
+                  Я подтверждаю правильность заполненной информации</label
                 >
               </div>
               <div class="input-group mb-5">
@@ -138,6 +137,7 @@
 </template>
 
 <script>
+import axios from "axios";
 import GymOpeningHours from "../components/partners/GymOpeningHours.vue";
 import DynamicClasses from "../components/partners/DynamicClasses.vue";
 // const API_KEY = "AIzaSyA5OFgEXYMwjaxzKJxfyyleOcmnpEKXtmo";
@@ -238,8 +238,28 @@ export default {
     updateImg(val) {
       this.images = val;
     },
-    submitPartner() {
-      console.log({
+    async submitPartner() {
+      if (
+        !this.legalName ||
+        !this.phoneNumber ||
+        !this.gymDesc ||
+        !this.location ||
+        !this.openingDate.length ||
+        !this.facilities.length ||
+        !this.className ||
+        !this.teacherName ||
+        !this.classDesc ||
+        !this.typeTraining ||
+        !this.typeAge ||
+        !this.visits ||
+        !this.hashtags.length ||
+        !this.price ||
+        !this.images.length
+      ) {
+        this.isEmpty = true;
+        return;
+      }
+      await axios.post("https://sporty.uz/api/v1/class/post/", {
         gym: {
           legal_name: this.legalName,
           phone_number: this.resolvedNumber,
@@ -265,6 +285,7 @@ export default {
           },
         ],
       });
+      this.$router.replace("/");
     },
     getFac(val) {
       let a = val.map((v) => v.id);
@@ -308,6 +329,11 @@ export default {
   },
   async created() {
     await this.$store.dispatch("getQuestions");
+  },
+  watch: {
+    isEmpty() {
+      setTimeout(() => (this.isEmpty = false), 2000);
+    },
   },
   mounted() {
     // if (this.isSupported) {
@@ -455,6 +481,10 @@ label {
   transform: translate(-50%, -50%);
   color: #d9d9d9;
   pointer-events: none;
+}
+input.border-danger::placeholder,
+textarea.border-danger::placeholder {
+  color: #dc3545;
 }
 .btn-more:active {
   background: #d9d9d9;
