@@ -7,6 +7,7 @@ const store = createStore({
   state() {
     return {
       questions: [],
+      eachWeekDates: [],
     };
   },
   mutations: rootMutations,

@@ -21,7 +21,7 @@
       </div>
     </div>
     <!-- hours dd -->
-    <div v-if="isHourTouched" tabindex="0" class="hours-dd">
+    <div v-if="isHourTouched" class="hours-dd">
       <p>Выберите дни недели</p>
       <div class="weekDays-selector">
         <input
@@ -88,6 +88,8 @@
           hour-label="час"
           minute-label="минута"
           input-width="100%"
+          placeholder="Дата начала"
+          close-on-complete
         ></vue-timepicker>
       </div>
       <p class="my-2">Часы работы до</p>
@@ -97,11 +99,13 @@
           hour-label="час"
           minute-label="минута"
           input-width="100%"
+          placeholder="Дата окончания"
+          close-on-complete
         ></vue-timepicker>
       </div>
       <div class="hours-action d-flex justify-content-between">
         <button @click="cencel" class="btn btn-outline-white">Отмена</button>
-        <button class="btn">Сохранить</button>
+        <button @click="saveHours" class="btn">Сохранить</button>
       </div>
     </div>
   </div>
@@ -111,6 +115,7 @@
 import VueTimepicker from "vue3-timepicker/src/VueTimepicker.vue";
 export default {
   props: ["qty"],
+  emits: ["updateHours", "minusDate"],
   components: {
     VueTimepicker,
   },
@@ -124,6 +129,29 @@ export default {
     };
   },
   methods: {
+    saveHours() {
+      let a = this.startHour.includes("HH");
+      let b = this.startHour.includes("mm");
+      let c = this.finishHour.includes("HH");
+      let d = this.finishHour.includes("mm");
+      if (
+        !this.weekDays.length ||
+        !this.startHour ||
+        !this.finishHour ||
+        a ||
+        b ||
+        c ||
+        d
+      )
+        return;
+      this.$emit("updateHours", {
+        start_date: this.startHour,
+        finish_date: this.finishHour,
+        week: this.weekDays,
+        qty: this.qty,
+      });
+      this.isHourTouched = false;
+    },
     cencel() {
       (this.isHourTouched = false),
         (this.startHour = ""),
@@ -142,7 +170,7 @@ export default {
 .hours-dd {
   position: absolute;
   left: -30%;
-  top: 100%;
+  top: 105%;
   min-width: 400px;
   background: #fff;
   border-radius: 10px;

@@ -35,12 +35,42 @@
           </div>
         </div>
       </div>
+      <!-- <div v-if="imgUrl" class="row">
+        <h1>hello</h1>
+        <img :src="imgUrl" alt="" />
+      </div> -->
     </div>
   </section>
 </template>
 
 <script>
-export default {};
+// import axios from "axios";
+export default {
+  data() {
+    return {
+      // imgUrl: "",
+      // users: [],
+    };
+  },
+  // methods: {
+  //   async getImage() {
+  //     const res = await axios.get(
+  //       "http://ec2-3-91-8-58.compute-1.amazonaws.com/api/v1/images/"
+  //     );
+  //     this.imgUrl = res.data[0].file;
+  //   },
+  //   async getUser() {
+  //     const res = await axios.get(
+  //       "http://ec2-3-91-8-58.compute-1.amazonaws.com/api/v1/user-info/"
+  //     );
+  //     this.users = res.data;
+  //   },
+  // },
+  // async created() {
+  //   // await this.getImage();
+  //   await this.getUser();
+  // },
+};
 </script>
 
 <style scoped>
@@ -145,6 +175,12 @@ button:hover {
   }
   .man-image {
     display: none;
+  }
+  .q-div {
+    justify-content: flex-end;
+  }
+  .actions {
+    margin-bottom: 4rem;
   }
 }
 </style>

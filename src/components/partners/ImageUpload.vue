@@ -4,7 +4,10 @@
     :class="imageData ? 'border-0' : ''"
     :style="{ 'background-image': `url(${imageData})` }"
   >
-    <span @click.stop="removeImage" v-if="imageData" class="float-end"
+    <span
+      @click.stop="removeImage(imageData)"
+      v-if="imageData"
+      class="float-end"
       >&times;</span
     >
     <span v-if="isLoading" class="loading">загрузка...</span>
@@ -20,6 +23,7 @@
 </template>
 
 <script>
+// import axios from "axios";
 export default {
   data() {
     return {
@@ -29,7 +33,9 @@ export default {
   },
   methods: {
     removeImage() {
-      alert("ehllo");
+      this.$emit("r-input", this.$refs.file.files[0]);
+      this.$refs["file"].value = "";
+      this.imageData = null;
     },
     handleFileUpload() {
       const input = this.$refs.file;
@@ -45,6 +51,21 @@ export default {
 
         // this.$emit("input", this.imageData);
         this.$emit("input", files[0]);
+
+        // console.log(files[0]);
+        // let data = new FormData();
+        // data.append("image", files[0]);
+        // let config = {
+        //   header: {
+        //     "Content-Type": "image/png",
+        //   },
+        // };
+
+        // axios.post(
+        //   "http://ec2-3-91-8-58.compute-1.amazonaws.com/api/v1/images/post/",
+        //   data,
+        //   config
+        // );
       }
     },
   },

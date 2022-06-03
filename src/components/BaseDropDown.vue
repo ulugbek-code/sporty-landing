@@ -2,6 +2,7 @@
   <div
     v-if="multiselect"
     class="custom-select"
+    :class="!multiSelected.length && isError ? 'empty' : ''"
     :tabindex="tabindex"
     @blur="open = false"
   >
@@ -36,10 +37,16 @@
       </div>
     </div>
   </div>
-  <div v-else class="custom-select" :tabindex="tabindex" @blur="open = false">
+  <div
+    v-else
+    class="custom-select"
+    :tabindex="tabindex"
+    :class="selected == 'Не выбрано' && isError ? 'empty' : ''"
+    @blur="open = false"
+  >
     <div
       class="selected"
-      :class="{ open: open, default: selected === 'Не выбрано' }"
+      :class="{ open: open, default: selected == 'Не выбрано' }"
       @click="open = !open"
     >
       {{ selected }}
@@ -59,12 +66,12 @@
           v-for="(option, i) of options"
           :key="i"
           @click="
-            selected = option;
+            selected = option.name;
             open = false;
             $emit('input', option);
           "
         >
-          {{ option }}
+          {{ option.name }}
         </div>
       </template>
     </div>
@@ -82,6 +89,9 @@ export default {
       type: String,
       required: false,
       default: null,
+    },
+    isError: {
+      required: false,
     },
     multiselect: {
       required: false,
@@ -112,6 +122,7 @@ export default {
   methods: {
     removeItem(val) {
       this.multiSelected = this.multiSelected.filter((item) => item !== val);
+      this.$emit("multi", this.multiSelected);
     },
     isUnique(comparer) {
       for (var i = 0; i < this.multiSelected.length; i++) {
@@ -127,7 +138,7 @@ export default {
         this.selected = option.name;
       } else {
         this.selected = option;
-        this.$emit("input", option.id);
+        this.$emit("input", option);
         this.open = false;
       }
     },
@@ -161,6 +172,10 @@ export default {
   padding-left: 1em;
   cursor: pointer;
   user-select: none;
+}
+.empty.custom-select .selected {
+  color: #dc3545 !important;
+  border: 1px solid #dc3545;
 }
 .custom-select .selected.default {
   color: #9d9d9d;

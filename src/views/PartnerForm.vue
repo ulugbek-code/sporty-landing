@@ -1,7 +1,5 @@
 <template>
   <section>
-    <!-- {{ lat }}-{{ lng }}
-    <div ref="mapDiv" style="width: 100%; height: 80vh" /> -->
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-3 d-none d-md-block">
@@ -20,8 +18,10 @@
               <h4 class="mb-2">Регистрация зала</h4>
               <div class="input-group mb-3">
                 <input
+                  v-model="legalName"
                   type="text"
-                  class="form-control"
+                  class="form-control border"
+                  :class="isEmpty && !legalName ? 'border-danger' : ''"
                   placeholder="Юридическое название"
                 />
               </div>
@@ -37,7 +37,8 @@
                   v-model="phoneNumber"
                   @input="formatPhoneNumber()"
                   type="tel"
-                  class="form-control"
+                  class="form-control border"
+                  :class="isEmpty && !phoneNumber ? 'border-danger' : ''"
                   placeholder="Номер телефона"
                 />
               </div>
@@ -48,6 +49,7 @@
                     <template v-for="gym in gymHoursOpeningQty" :key="gym">
                       <gym-opening-hours
                         @minusDate="updateGymQty"
+                        @updateHours="updatingHours"
                         :qty="gym"
                       ></gym-opening-hours>
                     </template>
@@ -62,8 +64,10 @@
               <div class="input-group justify-content-between mb-3">
                 <div class="address-wrapper">
                   <input
+                    v-model="location"
                     type="address"
-                    class="form-control"
+                    class="form-control border"
+                    :class="isEmpty && !location ? 'border-danger' : ''"
                     placeholder="Адрес"
                   />
                 </div>
@@ -74,15 +78,18 @@
               </div>
               <div class="input-group mb-3">
                 <textarea
-                  class="form-control"
+                  v-model="gymDesc"
+                  class="form-control border"
+                  :class="isEmpty && !gymDesc ? 'border-danger' : ''"
                   rows="3"
                   placeholder="Описание зала"
                 ></textarea>
               </div>
-              <div class="mb-3">
+              <div v-if="allQuestions.length" class="mb-3">
                 <p class="fw-bold mb-2">Удобства</p>
                 <base-drop-down
-                  :options="amenities"
+                  :options="allQuestions[6].variants"
+                  @multi="getFac"
                   :multiselect="true"
                   default="Не выбрано"
                 ></base-drop-down>
@@ -94,6 +101,9 @@
                     :each="eaachClass"
                     :sections="partnerQuestions[0].variants"
                     @deleteClass="updateClass"
+                    @changeImg="updateImg"
+                    @changeVid="updateVid"
+                    @updateValues="updateVal"
                   ></dynamic-classes>
                 </template>
               </template>
@@ -103,13 +113,21 @@
                 </button>
               </div>
               <div class="d-flex align-items-center my-5">
-                <input type="checkbox" id="confirm" />
+                <input
+                  v-model="isConfirm"
+                  type="checkbox"
+                  class="border"
+                  :class="isEmpty && !isConfirm ? 'border-danger' : ''"
+                  id="confirm"
+                />
                 <label for="confirm"
                   >Я подтверждаю правильность заполненной информации</label
                 >
               </div>
               <div class="input-group mb-5">
-                <button class="btn btn-map p-2">Сохранить</button>
+                <button @click="submitPartner" class="btn btn-map p-2">
+                  Сохранить
+                </button>
               </div>
             </form>
           </div>
@@ -136,13 +154,47 @@ export default {
       // watcher: null,
       // coords: { latitude: 0, longitude: 0 },
       // isSupported: "navigator" in window && "geolocation" in navigator,
+      isEmpty: false,
+      legalName: "",
       phoneNumber: "",
+      gymDesc: "",
+      location: "",
+      openingDate: [],
+      facilities: [],
+      //
+      className: "",
+      teacherName: "",
+      activities: "activities",
+      classDesc: "",
+      typeTraining: "",
+      typeAge: "",
+      visits: null,
+      videoFile: null,
+      hashtags: [],
+      price: null,
+      images: [],
+      // classDates: [],
+      isConfirm: false,
       gymHoursOpeningQty: [1],
       classesQty: [1],
-      fileName: "",
     };
   },
   computed: {
+    classDates() {
+      return this.$store.getters.eachWeekDates;
+    },
+    filteredOpeningDate() {
+      return this.openingDate.map((date) => {
+        return {
+          week: this.toNum(date.week),
+          start_date: date.start_date,
+          finish_date: date.finish_date,
+        };
+      });
+    },
+    resolvedNumber() {
+      return "+998" + this.phoneNumber.replace(/[() \s-]+/g, "");
+    },
     allQuestions() {
       return this.$store.getters.questions;
     },
@@ -159,6 +211,66 @@ export default {
     // },
   },
   methods: {
+    toNum(arr) {
+      return arr.map((item) => parseInt(item));
+    },
+    updatingHours(val) {
+      this.openingDate = this.openingDate.filter(
+        (date) => date.qty !== val.qty
+      );
+
+      this.openingDate.push(val);
+      // console.log(this.filteredOpeningDate);
+    },
+    updateVal(val) {
+      this.className = val.name;
+      this.teacherName = val.teacher;
+      this.classDesc = val.desc;
+      this.typeTraining = val.trainTy;
+      this.typeAge = val.ageTy;
+      this.visits = val.visit;
+      this.hashtags = val.fac;
+      this.price = val.price;
+    },
+    updateVid(val) {
+      this.videoFile = val;
+    },
+    updateImg(val) {
+      this.images = val;
+    },
+    submitPartner() {
+      console.log({
+        gym: {
+          legal_name: this.legalName,
+          phone_number: this.resolvedNumber,
+          description: this.gymDesc,
+          location: this.location,
+          opening_date: this.filteredOpeningDate,
+        },
+        class: [
+          {
+            name: this.className,
+            teacher_name: this.teacherName,
+            activities: "Activities",
+            description: this.classDesc,
+            type_training: this.typeTraining,
+            type_age: this.typeAge,
+            number_visitors: this.visits,
+            price: this.price,
+            video: this.videoFile,
+            hashtag: this.hashtags,
+            facilities: this.facilities,
+            image: this.images,
+            class_date: this.classDates,
+          },
+        ],
+      });
+    },
+    getFac(val) {
+      let a = val.map((v) => v.id);
+      this.facilities = a;
+      // console.log(this.facilities);
+    },
     formatPhoneNumber() {
       let x = this.phoneNumber
         .replace(/\D/g, "")
@@ -174,10 +286,12 @@ export default {
       }
     },
     updateGymQty(val) {
-      if (this.gymHoursOpeningQty.length > 1)
+      if (this.gymHoursOpeningQty.length > 1) {
         this.gymHoursOpeningQty = this.gymHoursOpeningQty.filter(
           (hour) => hour !== val
         );
+        this.openingDate = this.openingDate.filter((date) => date.qty !== val);
+      }
     },
     addGymHours() {
       this.gymHoursOpeningQty.push(
@@ -190,10 +304,6 @@ export default {
     updateClass(val) {
       if (this.classesQty.length > 1)
         this.classesQty = this.classesQty.filter((hour) => hour !== val);
-    },
-
-    handleFileUpload() {
-      this.fileName = this.$refs.file.files[0].name;
     },
   },
   async created() {

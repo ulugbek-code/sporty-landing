@@ -1,5 +1,5 @@
 <template>
-  <section>
+  <section @click="toggleError">
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-3 d-none d-md-block">
@@ -13,19 +13,30 @@
             <h2>Помогите нам подобрать для вас идеальные занятия</h2>
             <p>Вам нужно лишь заполнить информацию, поиском займемся мы сами</p>
           </div>
-          <div class="content-form">
+          <div v-if="userQuestions.length" class="content-form">
             <form @submit.prevent>
               <div class="input-group justify-content-between mb-3">
                 <div class="gender-wrapper">
                   <label class="mb-1">Ваш пол</label>
                   <base-drop-down
-                    :options="['Мужской', 'Женский']"
+                    :isError="isEmpty"
+                    :options="[
+                      { id: 'male', name: 'Мужской' },
+                      { id: 'female', name: 'Женский' },
+                    ]"
                     default="Не выбрано"
+                    @input="getGender"
                   ></base-drop-down>
                 </div>
                 <div class="gender-wrapper">
                   <label class="mb-1">Дата рождения</label>
-                  <input type="date" class="form-control" />
+                  <input
+                    v-model="birthDate"
+                    type="date"
+                    class="form-control border"
+                    :class="isEmpty && !birthDate ? 'border-danger' : ''"
+                    required
+                  />
                 </div>
               </div>
               <div class="input-group justify-content-between mb-3">
@@ -33,9 +44,12 @@
                   <label class="mb-1">Ваш рост</label>
                   <div class="input-group">
                     <input
+                      v-model="personHeight"
                       type="number"
-                      class="form-control"
-                      placeholder="Ваш рост"
+                      min="0"
+                      class="form-control border"
+                      :class="isEmpty && !personHeight ? 'border-danger' : ''"
+                      placeholder="Ваш рост (в метре 1.70)"
                     />
                     <span class="input-group-text">СМ</span>
                   </div>
@@ -44,9 +58,12 @@
                   <label class="mb-1">Ваш вес</label>
                   <div class="input-group">
                     <input
+                      v-model="personWeight"
                       type="number"
-                      class="form-control"
-                      placeholder="Ваш рост"
+                      min="0"
+                      class="form-control border"
+                      :class="isEmpty && !personWeight ? 'border-danger' : ''"
+                      placeholder="Ваш вес"
                     />
                     <span class="input-group-text">КГ</span>
                   </div>
@@ -56,7 +73,8 @@
               <div v-if="userQuestions.length" class="input-group mb-3">
                 <base-drop-down
                   :options="userQuestions[0].variants"
-                  :withObj="true"
+                  @input="getCity"
+                  :isError="isEmpty"
                   default="Не выбрано"
                 ></base-drop-down>
               </div>
@@ -67,6 +85,8 @@
                 <base-drop-down
                   :options="userQuestions[1].variants"
                   :multiselect="true"
+                  @multi="getTypeSport"
+                  :isError="isEmpty"
                   default="Не выбрано"
                 ></base-drop-down>
               </div>
@@ -74,7 +94,8 @@
               <div v-if="userQuestions.length" class="input-group mb-3">
                 <base-drop-down
                   :options="userQuestions[2].variants"
-                  :withObj="true"
+                  @input="getFrequencyTrain"
+                  :isError="isEmpty"
                   default="Не выбрано"
                 ></base-drop-down>
               </div>
@@ -84,7 +105,8 @@
               <div v-if="userQuestions.length" class="input-group mb-3">
                 <base-drop-down
                   :options="userQuestions[3].variants"
-                  :withObj="true"
+                  @input="getTimeSpendSport"
+                  :isError="isEmpty"
                   default="Не выбрано"
                 ></base-drop-down>
               </div>
@@ -93,7 +115,9 @@
               </p>
               <div class="input-group mb-3">
                 <base-drop-down
-                  :options="['Да', 'Нет']"
+                  :options="userQuestions[4].variants"
+                  @input="getBuySubscription"
+                  :isError="isEmpty"
                   default="Не выбрано"
                 ></base-drop-down>
               </div>
@@ -102,8 +126,11 @@
               </p>
               <div class="input-group mb-3">
                 <input
+                  v-model="howSpend"
                   type="number"
-                  class="form-control"
+                  min="0"
+                  class="form-control border"
+                  :class="isEmpty && !howSpend ? 'border-danger' : ''"
                   placeholder="Введите сумму"
                 />
                 <span class="input-group-text">СУМ</span>
@@ -114,8 +141,11 @@
               </p>
               <div class="input-group mb-3">
                 <input
+                  v-model="howWouldSpend"
                   type="number"
-                  class="form-control"
+                  min="0"
+                  class="form-control border"
+                  :class="isEmpty && !howWouldSpend ? 'border-danger' : ''"
                   placeholder="Введите сумму"
                 />
                 <span class="input-group-text">СУМ</span>
@@ -126,7 +156,9 @@
               </p>
               <div class="input-group mb-3">
                 <base-drop-down
-                  :options="['Да', 'Нет']"
+                  :options="userQuestions[5].variants"
+                  @input="getExpensiveSubs"
+                  :isError="isEmpty"
                   default="Не выбрано"
                 ></base-drop-down>
               </div>
@@ -137,6 +169,8 @@
                 <base-drop-down
                   :options="userQuestions[6].variants"
                   :multiselect="true"
+                  :isError="isEmpty"
+                  @multi="getFacilities"
                   default="Не выбрано"
                 ></base-drop-down>
               </div>
@@ -153,13 +187,18 @@
                   />+998</span
                 >
                 <input
+                  v-model="phoneNumber"
+                  @input="formatPhoneNumber()"
                   type="tel"
-                  class="form-control"
+                  class="form-control border"
+                  :class="isEmpty && !phoneNumber ? 'border-danger' : ''"
                   placeholder="Номер телефона"
                 />
               </div>
               <div class="input-group my-5">
-                <button class="btn btn-map p-2">Сохранить</button>
+                <button @click.stop="submitClient" class="btn btn-map p-2">
+                  Сохранить
+                </button>
               </div>
             </form>
           </div>
@@ -170,16 +209,137 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
   data() {
-    return {};
+    return {
+      isEmpty: false,
+      gender: "",
+      birthDate: "",
+      personHeight: null,
+      personWeight: null,
+      city: null,
+      typeSport: null,
+      frequencyTrain: null,
+      timeSpendSport: null,
+      buySubscription: null,
+      howSpend: null,
+      howWouldSpend: null,
+      expensiveSubs: null,
+      facilities: null,
+      variant: [],
+      phoneNumber: "",
+    };
   },
   computed: {
+    resolvedNumber() {
+      return "+998" + this.phoneNumber.replace(/[() \s-]+/g, "");
+    },
     allQuestions() {
       return this.$store.getters.questions;
     },
     userQuestions() {
       return this.allQuestions.filter((question) => question.status === "user");
+    },
+  },
+  methods: {
+    toggleError() {
+      if (this.isEmpty) this.isEmpty = false;
+    },
+    async submitClient() {
+      if (
+        !this.gender ||
+        !this.birthDate ||
+        !this.personHeight ||
+        !this.personWeight ||
+        !this.howSpend ||
+        !this.howWouldSpend ||
+        !this.city ||
+        !this.frequencyTrain ||
+        !this.timeSpendSport ||
+        !this.buySubscription ||
+        !this.expensiveSubs ||
+        !this.typeSport.length ||
+        !this.facilities.length
+      ) {
+        this.isEmpty = true;
+        return;
+      }
+      await axios.post("https://sporty.uz/api/v1/user/", {
+        gender: this.gender,
+        birth_date: this.birthDate,
+        height: this.personHeight,
+        weight: this.personWeight,
+        spend: this.howSpend,
+        amount: this.howWouldSpend,
+        variant: [
+          this.city,
+          this.frequencyTrain,
+          this.timeSpendSport,
+          this.buySubscription,
+          this.expensiveSubs,
+          ...this.typeSport,
+          ...this.facilities,
+        ],
+        phone_number: this.resolvedNumber,
+      });
+      this.$router.replace("/");
+    },
+    resetData() {
+      this.gender = "";
+      this.birthDate = "";
+      this.personHeight = null;
+      this.personWeight = null;
+      this.howSpend = null;
+      this.howWouldSpend = null;
+      this.city = null;
+      this.frequencyTrain = null;
+      this.timeSpendSport = null;
+      this.buySubscription = null;
+      this.expensiveSubs = null;
+      this.typeSport = null;
+      this.facilities = null;
+      this.phoneNumber = "";
+    },
+    getGender(val) {
+      this.gender = val.id;
+    },
+    getCity(val) {
+      this.city = val.id;
+    },
+    getTypeSport(val) {
+      let a = val.map((v) => v.id);
+      this.typeSport = a;
+    },
+    getFrequencyTrain(val) {
+      this.frequencyTrain = val.id;
+    },
+    getTimeSpendSport(val) {
+      this.timeSpendSport = val.id;
+    },
+    getBuySubscription(val) {
+      this.buySubscription = val.id;
+    },
+    getExpensiveSubs(val) {
+      this.expensiveSubs = val.id;
+    },
+    getFacilities(val) {
+      let a = val.map((v) => v.id);
+      this.facilities = a;
+    },
+    formatPhoneNumber() {
+      let x = this.phoneNumber
+        .replace(/\D/g, "")
+        .match(/(\d{0,2})(\d{0,3})(\d{0,4})/);
+      this.phoneNumber = !x[2]
+        ? x[1]
+        : "(" + x[1] + ") " + x[2] + (x[3] ? "-" + x[3] : "");
+      if (this.phoneNumber.length > 11) {
+        this.phoneNumber =
+          this.phoneNumber.substring(0, 11) +
+          "-" +
+          this.phoneNumber.substring(11);
+      }
     },
   },
   async created() {
@@ -245,8 +405,14 @@ label {
   font-size: 14px;
   line-height: 24px;
 }
+input[type="date"]:invalid::-webkit-datetime-edit {
+  color: #9d9d9d;
+}
+input.border-danger::placeholder {
+  color: #dc3545;
+}
 ::-webkit-calendar-picker-indicator {
-  filter: invert(0.5);
+  filter: invert(0.4);
 }
 
 @media screen and (max-width: 1200px) {
