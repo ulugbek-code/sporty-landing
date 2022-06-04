@@ -65,8 +65,9 @@
   <div class="mb-3">
     <p class="fw-bold mb-2">Количество посещений в абонименте</p>
     <input
-      v-model.lazy="visits"
+      v-model="visits"
       type="number"
+      @input="converV()"
       min="0"
       class="form-control border"
       :class="isError && !visits ? 'border-danger' : ''"
@@ -75,8 +76,9 @@
   </div>
   <div class="input-group mb-3">
     <input
-      v-model.lazy="price"
-      type="number"
+      v-model="price"
+      type="text"
+      @input="convertP()"
       min="0"
       class="form-control border"
       :class="isError && !price ? 'border-danger' : ''"
@@ -91,6 +93,10 @@
       style="width: 40%"
     >
       Добавить расписание
+      <span
+        class="triangle my-2 mx-2"
+        :class="classVisible ? 'open-t' : ''"
+      ></span>
     </button>
     <class-date
       :isClassTrue="classVisible"
@@ -161,6 +167,22 @@ export default {
     };
   },
   methods: {
+    converV() {
+      if (this.visits < 0) this.visits = Math.abs(this.visits);
+    },
+    convertP() {
+      if (isNaN(this.price[0])) this.price = "";
+      this.price = this.price.split(" ").join("").split("");
+      let formatted = [];
+      while (this.price.length) {
+        for (let i = 0; i < 3 && this.price.length; i++) {
+          formatted.push(this.price.shift());
+        }
+        if (this.price.length) formatted.push(" ");
+      }
+      this.price = formatted.join("");
+      if (this.price < 0) this.price = Math.abs(this.price);
+    },
     getAge(val) {
       this.ageType = val.id;
     },
@@ -369,7 +391,18 @@ input.border-danger::placeholder,
 textarea.border-danger::placeholder {
   color: #dc3545;
 }
-
+.triangle {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid #fff;
+  transition: all 0.2s ease;
+}
+.triangle.open-t {
+  transform: rotate(180deg);
+}
 .v-delete {
   display: none;
   position: absolute;

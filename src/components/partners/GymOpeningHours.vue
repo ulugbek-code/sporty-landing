@@ -2,7 +2,7 @@
   <div class="position-relative">
     <div @click="isHourTouched = !isHourTouched">
       <div
-        class="d-flex align-items-center fw-bold border p-2 custom_date mb-2"
+        class="d-flex align-items-center justify-content-end fw-bold border p-2 custom_date mb-2"
       >
         <p class="border-end my-0 px-2">
           <span v-for="week in weekDays" :key="week">{{ weeks[week] }},</span>
@@ -11,18 +11,23 @@
           {{ startHour ? startHour : "00:00" }} -
           {{ finishHour ? finishHour : "00:00" }}
         </p>
-        <span class="triangle mx-2"></span>
-        <span
-          @click.stop="$emit('minusDate', qty)"
-          class="bg-danger text-light rounded-circle"
-        >
-          x
-        </span>
+        <div class="d-flex align-items-center">
+          <span
+            class="triangle mx-2"
+            :class="isHourTouched ? 'open-t' : ''"
+          ></span>
+          <span
+            @click.stop="$emit('minusDate', qty)"
+            class="bg-danger text-light rounded-circle"
+          >
+            x
+          </span>
+        </div>
       </div>
     </div>
     <!-- hours dd -->
     <div v-if="isHourTouched" class="hours-dd">
-      <p>Выберите дни недели</p>
+      <h6>Выберите дни недели</h6>
       <div class="weekDays-selector">
         <input
           v-model="weekDays"
@@ -81,24 +86,26 @@
         />
         <label for="weekday-sun">Вс</label>
       </div>
-      <p class="my-2">Часы работы с</p>
+      <h6 class="my-2">Часы работы с</h6>
       <div>
         <vue-timepicker
           v-model="startHour"
           hour-label="час"
           minute-label="минута"
           input-width="100%"
+          :minute-interval="10"
           placeholder="Дата начала"
           close-on-complete
         ></vue-timepicker>
       </div>
-      <p class="my-2">Часы работы до</p>
+      <h6 class="my-2">Часы работы до</h6>
       <div class="mb-4">
         <vue-timepicker
           v-model="finishHour"
           hour-label="час"
           minute-label="минута"
           input-width="100%"
+          :minute-interval="10"
           placeholder="Дата окончания"
           close-on-complete
         ></vue-timepicker>
@@ -168,10 +175,8 @@ export default {
   border-radius: 8px;
 }
 .hours-dd {
-  position: absolute;
-  left: -30%;
-  top: 105%;
-  min-width: 400px;
+  position: relative;
+  min-width: 320px;
   background: #fff;
   border-radius: 10px;
   z-index: 10;
@@ -198,6 +203,10 @@ export default {
   border-left: 6px solid transparent;
   border-right: 6px solid transparent;
   border-top: 6px solid #016bd4;
+  transition: all 0.2s ease;
+}
+.triangle.open-t {
+  transform: rotate(180deg);
 }
 /* week */
 .weekDays-selector {
@@ -213,9 +222,9 @@ export default {
   font-size: 12px;
   background: #d9d9d9;
   color: #fff;
-  height: 40px;
-  width: 40px;
-  line-height: 40px;
+  height: 34px;
+  width: 34px;
+  line-height: 34px;
   text-align: center;
   cursor: pointer;
 }
@@ -229,5 +238,8 @@ span.rounded-circle {
 }
 span.rounded-circle:hover {
   background: #e45c69 !important;
+}
+p {
+  font-size: 13px;
 }
 </style>

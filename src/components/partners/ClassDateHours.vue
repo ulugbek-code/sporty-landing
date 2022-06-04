@@ -6,6 +6,7 @@
       hour-label="час"
       minute-label="минута"
       input-width="100%"
+      :minute-interval="10"
       placeholder="Дата начала"
       close-on-complete
     ></vue-timepicker>
@@ -17,6 +18,7 @@
       hour-label="час"
       minute-label="минута"
       input-width="100%"
+      :minute-interval="10"
       placeholder="Дата окончания"
       close-on-complete
     ></vue-timepicker>

@@ -6,8 +6,11 @@
           <img src="../assets/left-bar.png" alt="" />
         </div>
         <div class="col-md-9 px-5 pt-4">
+          <!-- {{ isLoad }} -->
           <div class="header-form">
-            <img src="../assets/sporty-logo.svg" alt="" />
+            <router-link to="/">
+              <img src="../assets/sporty-logo.svg" alt="" />
+            </router-link>
           </div>
           <div class="content-form mt-5">
             <div class="content-header mb-5">
@@ -42,7 +45,7 @@
                   placeholder="Номер телефона"
                 />
               </div>
-              <div class="input-group justify-content-between">
+              <div class="input-group justify-content-between hello mb-2">
                 <div class="d-flex justify-content-between address-wrapper">
                   <p class="py-2 fw-bold">Часы работы зала</p>
                   <div>
@@ -124,7 +127,11 @@
                 >
               </div>
               <div class="input-group mb-5">
-                <button @click="submitPartner" class="btn btn-map p-2">
+                <button
+                  @click="submitPartner"
+                  class="btn btn-map p-2"
+                  :disabled="!isConfirm"
+                >
                   Сохранить
                 </button>
               </div>
@@ -137,7 +144,7 @@
 </template>
 
 <script>
-import axios from "axios";
+// import axios from "axios";
 import GymOpeningHours from "../components/partners/GymOpeningHours.vue";
 import DynamicClasses from "../components/partners/DynamicClasses.vue";
 // const API_KEY = "AIzaSyA5OFgEXYMwjaxzKJxfyyleOcmnpEKXtmo";
@@ -154,6 +161,7 @@ export default {
       // watcher: null,
       // coords: { latitude: 0, longitude: 0 },
       // isSupported: "navigator" in window && "geolocation" in navigator,
+      isLoad: false,
       isEmpty: false,
       legalName: "",
       phoneNumber: "",
@@ -180,6 +188,9 @@ export default {
     };
   },
   computed: {
+    removedPrice() {
+      return this.price.replace(/\s/g, "");
+    },
     classDates() {
       return this.$store.getters.eachWeekDates;
     },
@@ -239,32 +250,13 @@ export default {
       this.images = val;
     },
     async submitPartner() {
-      if (
-        !this.legalName ||
-        !this.phoneNumber ||
-        !this.gymDesc ||
-        !this.location ||
-        !this.openingDate.length ||
-        !this.facilities.length ||
-        !this.className ||
-        !this.teacherName ||
-        !this.classDesc ||
-        !this.typeTraining ||
-        !this.typeAge ||
-        !this.visits ||
-        !this.hashtags.length ||
-        !this.price ||
-        !this.images.length
-      ) {
-        this.isEmpty = true;
-        return;
-      }
-      await axios.post("https://sporty.uz/api/v1/class/post/", {
+      console.log({
         gym: {
           legal_name: this.legalName,
           phone_number: this.resolvedNumber,
           description: this.gymDesc,
           location: this.location,
+          facilities: this.facilities,
           opening_date: this.filteredOpeningDate,
         },
         class: [
@@ -276,15 +268,94 @@ export default {
             type_training: this.typeTraining,
             type_age: this.typeAge,
             number_visitors: this.visits,
-            price: this.price,
+            price: this.removedPrice,
             video: this.videoFile,
             hashtag: this.hashtags,
-            facilities: this.facilities,
             image: this.images,
             class_date: this.classDates,
           },
         ],
       });
+      // if (
+      //   !this.legalName ||
+      //   !this.phoneNumber ||
+      //   !this.gymDesc ||
+      //   !this.location ||
+      //   !this.openingDate.length ||
+      //   !this.facilities.length ||
+      //   !this.className ||
+      //   !this.teacherName ||
+      //   !this.classDesc ||
+      //   !this.typeTraining ||
+      //   !this.typeAge ||
+      //   !this.visits ||
+      //   !this.hashtags.length ||
+      //   !this.price ||
+      //   !this.images.length
+      // ) {
+      //   this.isEmpty = true;
+      //   return;
+      // }
+      // let data = new FormData();
+      // data.append({
+      //   gym: {
+      //     legal_name: this.legalName,
+      //     phone_number: this.resolvedNumber,
+      //     description: this.gymDesc,
+      //     location: this.location,
+      //     facilities: this.facilities,
+      //     opening_date: this.filteredOpeningDate,
+      //   },
+      //   class: [
+      //     {
+      //       name: this.className,
+      //       teacher_name: this.teacherName,
+      //       activities: "Activities",
+      //       description: this.classDesc,
+      //       type_training: this.typeTraining,
+      //       type_age: this.typeAge,
+      //       number_visitors: this.visits,
+      //       price: this.price,
+      //       video: this.videoFile,
+      //       hashtag: this.hashtags,
+      //       image: this.images,
+      //       class_date: this.classDates,
+      //     },
+      //   ],
+      // });
+      // let config = {
+      //   header: {
+      //     "Content-Type": "multipart/form-data",
+      //   },
+      // };
+      // await axios.post("https://sporty.uz/api/v1/class/post/", data, config);
+
+      // await axios.post("https://sporty.uz/api/v1/class/post/", {
+      //   gym: {
+      //     legal_name: this.legalName,
+      //     phone_number: this.resolvedNumber,
+      //     description: this.gymDesc,
+      //     location: this.location,
+      //     facilities: this.facilities,
+      //     opening_date: this.filteredOpeningDate,
+      //   },
+      //   class: [
+      //     {
+      //       name: this.className,
+      //       teacher_name: this.teacherName,
+      //       activities: "Activities",
+      //       description: this.classDesc,
+      //       type_training: this.typeTraining,
+      //       type_age: this.typeAge,
+      //       number_visitors: this.visits,
+      //       price: this.price,
+      //       video: this.videoFile,
+      //       hashtag: this.hashtags,
+      //       image: this.images,
+      //       class_date: this.classDates,
+      //     },
+      //   ],
+      // });
       this.$router.replace("/");
     },
     getFac(val) {
@@ -328,7 +399,9 @@ export default {
     },
   },
   async created() {
+    this.isLoad = true;
     await this.$store.dispatch("getQuestions");
+    this.isLoad = false;
   },
   watch: {
     isEmpty() {
@@ -491,6 +564,15 @@ textarea.border-danger::placeholder {
 }
 @media screen and (max-width: 1200px) {
   .content-form {
+    width: 100%;
+  }
+}
+@media screen and (max-width: 996px) {
+  .hello {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .address-wrapper {
     width: 100%;
   }
 }

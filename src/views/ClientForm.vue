@@ -7,7 +7,9 @@
         </div>
         <div class="col-md-9 px-5 pt-4">
           <div class="header-form">
-            <img src="../assets/sporty-logo.svg" alt="" />
+            <router-link to="/">
+              <img src="../assets/sporty-logo.svg" alt="" />
+            </router-link>
           </div>
           <div class="content-header my-5">
             <h2>Помогите нам подобрать для вас идеальные занятия</h2>
@@ -127,7 +129,8 @@
               <div class="input-group mb-3">
                 <input
                   v-model="howSpend"
-                  type="number"
+                  type="text"
+                  @input="convertSpend()"
                   min="0"
                   class="form-control border"
                   :class="isEmpty && !howSpend ? 'border-danger' : ''"
@@ -142,7 +145,8 @@
               <div class="input-group mb-3">
                 <input
                   v-model="howWouldSpend"
-                  type="number"
+                  type="text"
+                  @input="convertWouldSpend()"
                   min="0"
                   class="form-control border"
                   :class="isEmpty && !howWouldSpend ? 'border-danger' : ''"
@@ -232,6 +236,12 @@ export default {
     };
   },
   computed: {
+    removedSpend() {
+      return this.howSpend.replace(/\s/g, "");
+    },
+    removedWouldSpend() {
+      return this.howWouldSpend.replace(/\s/g, "");
+    },
     resolvedNumber() {
       return "+998" + this.phoneNumber.replace(/[() \s-]+/g, "");
     },
@@ -243,6 +253,33 @@ export default {
     },
   },
   methods: {
+    convertSpend() {
+      if (isNaN(this.howSpend[0])) this.howSpend = "";
+      this.howSpend = this.howSpend.split(" ").join("").split("");
+      let formatted = [];
+      while (this.howSpend.length) {
+        for (let i = 0; i < 3 && this.howSpend.length; i++) {
+          formatted.push(this.howSpend.shift());
+        }
+        if (this.howSpend.length) formatted.push(" ");
+      }
+      this.howSpend = formatted.join("");
+      if (this.howSpend < 0) this.howSpend = Math.abs(this.howSpend);
+    },
+    convertWouldSpend() {
+      if (isNaN(this.howWouldSpend[0])) this.howWouldSpend = "";
+      this.howWouldSpend = this.howWouldSpend.split(" ").join("").split("");
+      let formatted = [];
+      while (this.howWouldSpend.length) {
+        for (let i = 0; i < 3 && this.howWouldSpend.length; i++) {
+          formatted.push(this.howWouldSpend.shift());
+        }
+        if (this.howWouldSpend.length) formatted.push(" ");
+      }
+      this.howWouldSpend = formatted.join("");
+      if (this.howWouldSpend < 0)
+        this.howWouldSpend = Math.abs(this.howWouldSpend);
+    },
     toggleError() {
       if (this.isEmpty) this.isEmpty = false;
     },
@@ -270,8 +307,8 @@ export default {
         birth_date: this.birthDate,
         height: this.personHeight,
         weight: this.personWeight,
-        spend: this.howSpend,
-        amount: this.howWouldSpend,
+        spend: this.removedSpend,
+        amount: this.removedSpend,
         variant: [
           this.city,
           this.frequencyTrain,

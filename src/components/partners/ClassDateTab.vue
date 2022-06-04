@@ -5,7 +5,7 @@
       v-if="!isDateVisible"
       class="btn btn-more p-2 px-4"
     >
-      Добавить еще часы
+      {{ dates.length ? "Добавить еще часы" : "Добавить занятие" }}
     </button>
     <template v-if="isDateVisible">
       <div class="my-3">
