@@ -1,4 +1,43 @@
 <template>
+  <base-dialog :show="isSubmitted">
+    <template #default>
+      <div class="form-task text-center">
+        <img src="../assets/correct.png" alt="" />
+        <h4 style="color: #222">Спасибо за ваш вклад!</h4>
+        <p>Вам остается только ждать, все остальное сделаем сами</p>
+      </div>
+      <div class="d-grid text-center mt-5">
+        <router-link to="/">
+          <button class="w-100 btn btn-primary py-2 px-5">Готова</button>
+        </router-link>
+      </div>
+    </template>
+  </base-dialog>
+  <!--  -->
+  <base-dialog :show="isLoading && !isSubmitted">
+    <template #default>
+      <div class="form-task text-center">
+        <h2>Загрузка...</h2>
+      </div>
+    </template>
+  </base-dialog>
+  <base-dialog :show="isNotSubmitted">
+    <template #default>
+      <div class="form-task text-center">
+        <img src="../assets/remove.png" alt="" />
+        <h2 class="mt-2">Не отправлено</h2>
+      </div>
+      <div class="d-grid text-center mt-5">
+        <button
+          @click="isNotSubmitted = false"
+          class="w-100 btn btn-primary py-2 px-5"
+        >
+          Занова
+        </button>
+      </div>
+    </template>
+  </base-dialog>
+  <!--  -->
   <section @click="toggleError">
     <div class="container-fluid">
       <div class="row">
@@ -214,9 +253,16 @@
 
 <script>
 import axios from "axios";
+import BaseDialog from "../components/BaseDialog.vue";
 export default {
+  components: {
+    BaseDialog,
+  },
   data() {
     return {
+      isLoading: false,
+      isNotSubmitted: false,
+      isSubmitted: false,
       isEmpty: false,
       gender: "",
       birthDate: "",
@@ -284,43 +330,51 @@ export default {
       if (this.isEmpty) this.isEmpty = false;
     },
     async submitClient() {
-      if (
-        !this.gender ||
-        !this.birthDate ||
-        !this.personHeight ||
-        !this.personWeight ||
-        !this.howSpend ||
-        !this.howWouldSpend ||
-        !this.city ||
-        !this.frequencyTrain ||
-        !this.timeSpendSport ||
-        !this.buySubscription ||
-        !this.expensiveSubs ||
-        !this.typeSport.length ||
-        !this.facilities.length
-      ) {
-        this.isEmpty = true;
-        return;
+      try {
+        if (
+          !this.gender ||
+          !this.birthDate ||
+          !this.personHeight ||
+          !this.personWeight ||
+          !this.howSpend ||
+          !this.howWouldSpend ||
+          !this.city ||
+          !this.frequencyTrain ||
+          !this.timeSpendSport ||
+          !this.buySubscription ||
+          !this.expensiveSubs ||
+          !this.typeSport.length ||
+          !this.facilities.length
+        ) {
+          this.isEmpty = true;
+          return;
+        }
+        this.isLoading = true;
+        await axios.post("https://sporty.uz/api/v1/user/post/", {
+          gender: this.gender,
+          birth_date: this.birthDate,
+          height: this.personHeight,
+          weight: this.personWeight,
+          spend: this.removedSpend,
+          amount: this.removedSpend,
+          variant: [
+            this.city,
+            this.frequencyTrain,
+            this.timeSpendSport,
+            this.buySubscription,
+            this.expensiveSubs,
+            ...this.typeSport,
+            ...this.facilities,
+          ],
+          phone_number: this.resolvedNumber,
+        });
+        this.isLoading = false;
+        this.isSubmitted = true;
+      } catch (e) {
+        this.isLoading = false;
+        this.isNotSubmitted = true;
+        console.log(e);
       }
-      await axios.post("https://sporty.uz/api/v1/user/", {
-        gender: this.gender,
-        birth_date: this.birthDate,
-        height: this.personHeight,
-        weight: this.personWeight,
-        spend: this.removedSpend,
-        amount: this.removedSpend,
-        variant: [
-          this.city,
-          this.frequencyTrain,
-          this.timeSpendSport,
-          this.buySubscription,
-          this.expensiveSubs,
-          ...this.typeSport,
-          ...this.facilities,
-        ],
-        phone_number: this.resolvedNumber,
-      });
-      this.$router.replace("/");
     },
     resetData() {
       this.gender = "";
@@ -386,6 +440,13 @@ export default {
 </script>
 
 <style scoped>
+.form-task img {
+  width: 150px;
+  margin: 2rem 0;
+}
+.form-task p {
+  color: #9d9d9d;
+}
 input,
 select,
 textarea {

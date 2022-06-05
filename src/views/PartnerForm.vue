@@ -1,4 +1,42 @@
 <template>
+  <base-dialog :show="isSubmitted">
+    <template #default>
+      <div class="form-task text-center">
+        <img src="../assets/correct.png" alt="" />
+        <h4 style="color: #222">Спасибо за ваш вклад!</h4>
+        <p>Вам остается только ждать, все остальное сделаем сами</p>
+      </div>
+      <div class="d-grid text-center mt-5">
+        <router-link to="/">
+          <button class="w-100 btn btn-primary py-2 px-5">Готова</button>
+        </router-link>
+      </div>
+    </template>
+  </base-dialog>
+  <base-dialog :show="isLoading && !isSubmitted">
+    <template #default>
+      <div class="form-task text-center">
+        <h2>Загрузка...</h2>
+      </div>
+    </template>
+  </base-dialog>
+  <base-dialog :show="isNotSubmitted">
+    <template #default>
+      <div class="form-task text-center">
+        <img src="../assets/remove.png" alt="" />
+        <h2 class="mt-2">Не отправлено</h2>
+      </div>
+      <div class="d-grid text-center mt-5">
+        <button
+          @click="isNotSubmitted = false"
+          class="w-100 btn btn-primary py-2 px-5"
+        >
+          Занова
+        </button>
+      </div>
+    </template>
+  </base-dialog>
+  <!--  -->
   <section>
     <div class="container-fluid">
       <div class="row">
@@ -47,7 +85,12 @@
               </div>
               <div class="input-group justify-content-between hello mb-2">
                 <div class="d-flex justify-content-between address-wrapper">
-                  <p class="py-2 fw-bold">Часы работы зала</p>
+                  <p
+                    class="py-2 fw-bold"
+                    :class="isEmpty && !openingDate.length ? 'text-danger' : ''"
+                  >
+                    Часы работы зала
+                  </p>
                   <div>
                     <template v-for="gym in gymHoursOpeningQty" :key="gym">
                       <gym-opening-hours
@@ -67,17 +110,30 @@
               <div class="input-group justify-content-between mb-3">
                 <div class="address-wrapper">
                   <input
-                    v-model="location"
+                    :value="getLocation"
                     type="address"
                     class="form-control border"
-                    :class="isEmpty && !location ? 'border-danger' : ''"
+                    :class="
+                      isEmpty && !location.length ? 'bg-danger text-light' : ''
+                    "
                     placeholder="Адрес"
+                    disabled
                   />
                 </div>
 
-                <!-- <div class="same-btn-wrapper">
-                  <button class="btn btn-map">Указать на карте</button>
-                </div> -->
+                <div class="same-btn-wrapper">
+                  <button
+                    @click="isLocationOpen = !isLocationOpen"
+                    class="btn btn-map"
+                  >
+                    {{
+                      !isLocationOpen ? " Указать на карте" : "Закрыть карту"
+                    }}
+                  </button>
+                </div>
+              </div>
+              <div v-if="isLocationOpen" class="my-4">
+                <map-uzb @sendCoords="getCoords"></map-uzb>
               </div>
               <div class="input-group mb-3">
                 <textarea
@@ -144,24 +200,38 @@
 </template>
 
 <script>
-// import axios from "axios";
+import axios from "axios";
 import GymOpeningHours from "../components/partners/GymOpeningHours.vue";
 import DynamicClasses from "../components/partners/DynamicClasses.vue";
-// const API_KEY = "AIzaSyA5OFgEXYMwjaxzKJxfyyleOcmnpEKXtmo";
+import BaseDialog from "../components/BaseDialog.vue";
+import MapUzb from "../components/MapUzb.vue";
+
+// const API_KEY = "456787f4-294f-4b71-9233-05be8554dd23";
+
 export default {
   components: {
     GymOpeningHours,
     DynamicClasses,
+    BaseDialog,
+    MapUzb,
   },
   data() {
     return {
-      // loader: new Loader({ apiKey: API_KEY }),
-      // otherPos: null,
-      // map: null,
+      // settings: {
+      //   apiKey: "456787f4-294f-4b71-9233-05be8554dd23",
+      //   lang: "ru_RU",
+      //   coordorder: "latlong",
+      //   enterprise: false,
+      //   version: "2.1",
+      // },
       // watcher: null,
       // coords: { latitude: 0, longitude: 0 },
       // isSupported: "navigator" in window && "geolocation" in navigator,
-      isLoad: false,
+      //
+      isLocationOpen: false,
+      isNotSubmitted: false,
+      isLoading: false,
+      isSubmitted: false,
       isEmpty: false,
       legalName: "",
       phoneNumber: "",
@@ -189,7 +259,9 @@ export default {
   },
   computed: {
     removedPrice() {
-      return this.price.replace(/\s/g, "");
+      if (this.price) {
+        return this.price.replace(/\s/g, "");
+      } else return "";
     },
     classDates() {
       return this.$store.getters.eachWeekDates;
@@ -220,8 +292,16 @@ export default {
     // lng() {
     //   return this.coords.longitude;
     // },
+    getLocation() {
+      return `Ваши координаты: ${
+        this.location.length ? this.location[0].toFixed(2) : "еще нет"
+      } - ${this.location.length ? this.location[1].toFixed(2) : "еще нет"}`;
+    },
   },
   methods: {
+    getCoords(val) {
+      this.location = val;
+    },
     toNum(arr) {
       return arr.map((item) => parseInt(item));
     },
@@ -250,113 +330,87 @@ export default {
       this.images = val;
     },
     async submitPartner() {
-      console.log({
-        gym: {
-          legal_name: this.legalName,
-          phone_number: this.resolvedNumber,
-          description: this.gymDesc,
-          location: this.location,
-          facilities: this.facilities,
-          opening_date: this.filteredOpeningDate,
-        },
-        class: [
-          {
-            name: this.className,
-            teacher_name: this.teacherName,
-            activities: "Activities",
-            description: this.classDesc,
-            type_training: this.typeTraining,
-            type_age: this.typeAge,
-            number_visitors: this.visits,
-            price: this.removedPrice,
-            video: this.videoFile,
-            hashtag: this.hashtags,
-            image: this.images,
-            class_date: this.classDates,
-          },
-        ],
-      });
-      // if (
-      //   !this.legalName ||
-      //   !this.phoneNumber ||
-      //   !this.gymDesc ||
-      //   !this.location ||
-      //   !this.openingDate.length ||
-      //   !this.facilities.length ||
-      //   !this.className ||
-      //   !this.teacherName ||
-      //   !this.classDesc ||
-      //   !this.typeTraining ||
-      //   !this.typeAge ||
-      //   !this.visits ||
-      //   !this.hashtags.length ||
-      //   !this.price ||
-      //   !this.images.length
-      // ) {
-      //   this.isEmpty = true;
-      //   return;
-      // }
-      // let data = new FormData();
-      // data.append({
-      //   gym: {
-      //     legal_name: this.legalName,
-      //     phone_number: this.resolvedNumber,
-      //     description: this.gymDesc,
-      //     location: this.location,
-      //     facilities: this.facilities,
-      //     opening_date: this.filteredOpeningDate,
-      //   },
-      //   class: [
-      //     {
-      //       name: this.className,
-      //       teacher_name: this.teacherName,
-      //       activities: "Activities",
-      //       description: this.classDesc,
-      //       type_training: this.typeTraining,
-      //       type_age: this.typeAge,
-      //       number_visitors: this.visits,
-      //       price: this.price,
-      //       video: this.videoFile,
-      //       hashtag: this.hashtags,
-      //       image: this.images,
-      //       class_date: this.classDates,
-      //     },
-      //   ],
-      // });
-      // let config = {
-      //   header: {
-      //     "Content-Type": "multipart/form-data",
-      //   },
-      // };
-      // await axios.post("https://sporty.uz/api/v1/class/post/", data, config);
+      try {
+        if (
+          !this.legalName ||
+          !this.phoneNumber ||
+          !this.gymDesc ||
+          !this.location.length ||
+          !this.openingDate.length ||
+          !this.facilities.length ||
+          !this.className ||
+          !this.teacherName ||
+          !this.classDesc ||
+          !this.typeTraining ||
+          !this.typeAge ||
+          !this.visits ||
+          !this.hashtags.length ||
+          !this.price ||
+          !this.images.length
+        ) {
+          this.isEmpty = true;
+          return;
+        }
 
-      // await axios.post("https://sporty.uz/api/v1/class/post/", {
-      //   gym: {
-      //     legal_name: this.legalName,
-      //     phone_number: this.resolvedNumber,
-      //     description: this.gymDesc,
-      //     location: this.location,
-      //     facilities: this.facilities,
-      //     opening_date: this.filteredOpeningDate,
-      //   },
-      //   class: [
-      //     {
-      //       name: this.className,
-      //       teacher_name: this.teacherName,
-      //       activities: "Activities",
-      //       description: this.classDesc,
-      //       type_training: this.typeTraining,
-      //       type_age: this.typeAge,
-      //       number_visitors: this.visits,
-      //       price: this.price,
-      //       video: this.videoFile,
-      //       hashtag: this.hashtags,
-      //       image: this.images,
-      //       class_date: this.classDates,
-      //     },
-      //   ],
-      // });
-      this.$router.replace("/");
+        let fileData = new FormData();
+
+        // fileData.append("image", this.images);
+        fileData.append(
+          "class",
+          JSON.stringify({
+            gym: {
+              legal_name: this.legalName,
+              phone_number: this.resolvedNumber,
+              description: this.gymDesc,
+              location: this.location,
+              facilities: this.facilities,
+              opening_date: this.filteredOpeningDate,
+            },
+            class: [
+              {
+                name: this.className,
+                teacher_name: this.teacherName,
+                activities: "Activities",
+                description: this.classDesc,
+                type_training: this.typeTraining,
+                type_age: this.typeAge,
+                number_visitors: this.visits,
+                price: this.removedPrice,
+                // video: this.videoFile,
+                hashtag: this.hashtags,
+                // image: this.images,
+                class_date: this.classDates,
+              },
+            ],
+          })
+        );
+
+        for (let i = 0; i < this.images.length; i++) {
+          let file = this.images[i];
+          fileData.append("image", file);
+        }
+
+        fileData.append("video", this.videoFile);
+        let config = {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            // "Content-Type": "image/png",
+          },
+        };
+        this.isLoading = true;
+        await axios.post(
+          "https://sporty.uz/api/v1/class/post/",
+          fileData,
+          config
+        );
+        this.isLoading = false;
+
+        this.isSubmitted = true;
+      } catch (e) {
+        this.isLoading = false;
+        this.isNotSubmitted = true;
+        console.log(e);
+      }
     },
     getFac(val) {
       let a = val.map((v) => v.id);
@@ -399,27 +453,20 @@ export default {
     },
   },
   async created() {
-    this.isLoad = true;
     await this.$store.dispatch("getQuestions");
-    this.isLoad = false;
   },
   watch: {
     isEmpty() {
-      setTimeout(() => (this.isEmpty = false), 2000);
+      setTimeout(() => (this.isEmpty = false), 2500);
     },
   },
-  mounted() {
-    // if (this.isSupported) {
-    //   this.watcher = navigator.geolocation.watchPosition(
-    //     (position) => (this.coords = position.coords)
-    //   );
-    // }
-    // await this.loader.load();
-    // this.map = new google.maps.Map(this.$refs.mapDiv, {
-    //   center: { lat: parseInt(this.lat), lng: parseInt(this.lng) },
-    //   zoom: 9,
-    // });
-  },
+  // async mounted() {
+  //   if (this.isSupported) {
+  //     this.watcher = navigator.geolocation.watchPosition(
+  //       (position) => (this.coords = position.coords)
+  //     );
+  //   }
+  // },
   // unmounted() {
   //   if (this.watcher) navigator.geolocation.clearWatch(this.watcher);
   // },
@@ -440,6 +487,10 @@ img {
   width: 100%;
   height: 100%;
 }
+.form-task img {
+  width: 150px;
+  margin: 2rem 0;
+}
 .content-form {
   width: 70%;
 }
@@ -448,7 +499,8 @@ img {
   margin-bottom: 5px;
 }
 
-.content-header p {
+.content-header p,
+.form-task p {
   color: #9d9d9d;
 }
 .input-group-text {
@@ -574,6 +626,12 @@ textarea.border-danger::placeholder {
   }
   .address-wrapper {
     width: 100%;
+  }
+}
+
+@media screen and (max-width: 996px) {
+  .same-btn-wrapper button:last-child {
+    margin-top: 10px;
   }
 }
 </style>

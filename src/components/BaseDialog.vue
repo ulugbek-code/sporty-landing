@@ -50,10 +50,10 @@ div {
 
 dialog {
   position: fixed;
-  top: 11vh;
-  left: 50%;
-  transform: translate(-50%, -10%);
-  min-width: 400px;
+  top: 15vh;
+  /* left: 50%-12rem;
+  transform: translate(-50%, -10%); */
+  min-width: 300px;
   /* max-height: 100vh;
   overflow: auto; */
   z-index: 100;
@@ -61,7 +61,7 @@ dialog {
   border: none;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
   padding: 0;
-  margin: 0;
+  margin: 0 auto;
 
   /* overflow: auto; */
 }
@@ -88,10 +88,24 @@ section {
   padding: 0.4rem;
 }
 
-/* @media (min-width: 768px) {
+.dialog-enter-from,
+.dialog-leave-to {
+  opacity: 0;
+  transform: scale(0.8);
+}
+.dialog-enter-to,
+.dialog-leave-from {
+  opacity: 1;
+  transform: scale(1);
+}
+.dialog-enter-active,
+.dialog-leave-active {
+  transition: all 0.35s ease;
+}
+@media (max-width: 768px) {
   dialog {
-    left: calc(50% - 12rem);
-    width: 40rem;
+    top: 30%;
+    width: 20rem;
   }
-} */
+}
 </style>

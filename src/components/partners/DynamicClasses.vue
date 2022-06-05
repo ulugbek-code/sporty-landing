@@ -103,7 +103,12 @@
       @close-opening="classVisible = false"
     ></class-date>
   </div>
-  <p class="mb-2 photo-header">Фотографии секции</p>
+  <p
+    class="mb-2 photo-header"
+    :class="isError && !images.length ? 'text-danger' : ''"
+  >
+    Фотографии секции
+  </p>
   <div class="d-flex justify-content-between mb-3">
     <image-upload @input="addImage" @r-input="removeImg"></image-upload>
     <image-upload @input="addImage" @r-input="removeImg"></image-upload>
@@ -112,9 +117,10 @@
     <image-upload @input="addImage" @r-input="removeImg"></image-upload>
   </div>
   <div class="input-group v-w mb-3">
-    <div class="vid-btn-wrapper">
+    <div class="vid-btn-wrapper d-flex">
       <button>Добавить видео</button>
       <input type="file" accept="video/*" @change="handleFileUpload($event)" />
+      <p class="optional">Не обязательно</p>
     </div>
     <div class="w-100">
       <span @click.stop="deleteVid" class="v-delete">x</span>
@@ -202,10 +208,15 @@ export default {
       });
     },
     handleFileUpload(event) {
-      this.file = event.target.files[0];
-      this.$emit("changeVid", this.file);
-      // console.log(this.file);
-      this.previewVideo();
+      if (event) {
+        this.file = event.target.files[0];
+        if (Math.ceil(this.file.size / 1024) > 10240) {
+          alert("Pазмер видео больше 10 мб");
+          return;
+        }
+        this.$emit("changeVid", this.file);
+        this.previewVideo();
+      }
     },
     //
     addImage(val) {
@@ -327,8 +338,9 @@ export default {
 .vid-btn-wrapper {
   width: 40%;
   position: relative;
-  overflow: hidden;
+  /* overflow: hidden; */
   display: inline-block;
+  cursor: pointer;
 }
 .vid-btn-wrapper button {
   width: 100%;
@@ -340,13 +352,17 @@ export default {
   font-weight: 700;
   font-size: 14px;
   line-height: 24px;
+  cursor: pointer;
 }
 .vid-btn-wrapper input[type="file"] {
-  font-size: 100px;
+  font-size: 0px;
   position: absolute;
   left: 0;
+  right: 0;
   top: 0;
+  bottom: 0;
   opacity: 0;
+  cursor: pointer;
 }
 .btn-map {
   width: 100%;
@@ -374,10 +390,15 @@ textarea {
 }
 input::placeholder,
 textarea::placeholder,
-.photo-header {
+.photo-header,
+.optional {
   color: #9d9d9d;
 }
-
+.optional {
+  position: absolute;
+  right: -50%;
+  top: 6px;
+}
 #confirm {
   width: 16px;
   height: 16px;
@@ -424,5 +445,15 @@ textarea.border-danger::placeholder {
 }
 .delete-p:hover {
   color: #ec7884 !important;
+}
+@media screen and (max-width: 996px) {
+  .optional {
+    right: -60%;
+  }
+}
+@media screen and (max-width: 596px) {
+  .optional {
+    right: -110%;
+  }
 }
 </style>
