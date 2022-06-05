@@ -26,6 +26,7 @@
       <div class="form-task text-center">
         <img src="../assets/remove.png" alt="" />
         <h2 class="mt-2">Не отправлено</h2>
+        <p v-if="error">Номер телефона уже существует</p>
       </div>
       <div class="d-grid text-center mt-5">
         <button
@@ -56,7 +57,9 @@
           </div>
           <div v-if="userQuestions.length" class="content-form">
             <form @submit.prevent>
-              <div class="input-group justify-content-between mb-3">
+              <div
+                class="res-container input-group justify-content-between mb-3"
+              >
                 <div class="gender-wrapper">
                   <label class="mb-1">Ваш пол</label>
                   <base-drop-down
@@ -260,6 +263,7 @@ export default {
   },
   data() {
     return {
+      error: false,
       isLoading: false,
       isNotSubmitted: false,
       isSubmitted: false,
@@ -371,9 +375,11 @@ export default {
         this.isLoading = false;
         this.isSubmitted = true;
       } catch (e) {
+        if (e.response.status === 400) {
+          this.error = true;
+        }
         this.isLoading = false;
         this.isNotSubmitted = true;
-        console.log(e);
       }
     },
     resetData() {
@@ -515,6 +521,14 @@ input.border-danger::placeholder {
 
 @media screen and (max-width: 1200px) {
   .content-form {
+    width: 100%;
+  }
+}
+@media screen and (max-width: 576px) {
+  .res-container {
+    flex-direction: column;
+  }
+  .gender-wrapper {
     width: 100%;
   }
 }

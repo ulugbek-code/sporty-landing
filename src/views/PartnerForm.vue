@@ -43,7 +43,7 @@
         <div class="col-md-3 d-none d-md-block">
           <img src="../assets/left-bar.png" alt="" />
         </div>
-        <div class="col-md-9 px-5 pt-4">
+        <div class="col-md-9 px-4 pt-4">
           <!-- {{ isLoad }} -->
           <div class="header-form">
             <router-link to="/">
@@ -66,7 +66,7 @@
                   placeholder="Юридическое название"
                 />
               </div>
-              <div class="input-group mb-3">
+              <div class="tel-container input-group mb-3">
                 <span class="input-group-text"
                   ><img
                     src="../assets/uzb.svg"
@@ -407,9 +407,9 @@ export default {
 
         this.isSubmitted = true;
       } catch (e) {
+        console.log(e.message);
         this.isLoading = false;
         this.isNotSubmitted = true;
-        console.log(e);
       }
     },
     getFac(val) {
@@ -632,6 +632,22 @@ textarea.border-danger::placeholder {
 @media screen and (max-width: 996px) {
   .same-btn-wrapper button:last-child {
     margin-top: 10px;
+  }
+}
+@media screen and (max-width: 576px) {
+  .address-wrapper {
+    flex-direction: column;
+  }
+  .same-btn-wrapper {
+    width: 100%;
+  }
+  input[type="checkbox"] {
+    -ms-transform: scale(2); /* IE */
+    -moz-transform: scale(2); /* FF */
+    -webkit-transform: scale(2); /* Safari and Chrome */
+    -o-transform: scale(2); /* Opera */
+    transform: scale(2);
+    margin-left: 8px;
   }
 }
 </style>

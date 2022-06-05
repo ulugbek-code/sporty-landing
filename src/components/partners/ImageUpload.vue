@@ -140,4 +140,10 @@ span.float-end {
     left: 4%;
   }
 }
+@media screen and (max-width: 596px) {
+  .dropbox {
+    width: 60px;
+    height: 60px;
+  }
+}
 </style>

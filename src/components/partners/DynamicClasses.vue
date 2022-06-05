@@ -87,16 +87,9 @@
     <span class="input-group-text">СУМ</span>
   </div>
   <div class="mb-3">
-    <button
-      @click="classVisible = !classVisible"
-      class="btn btn-map"
-      style="width: 40%"
-    >
+    <button @click="classVisible = !classVisible" class="btn-map2">
       Добавить расписание
-      <span
-        class="triangle my-2 mx-2"
-        :class="classVisible ? 'open-t' : ''"
-      ></span>
+      <span class="triangle mx-2" :class="classVisible ? 'open-t' : ''"></span>
     </button>
     <class-date
       :isClassTrue="classVisible"
@@ -364,12 +357,22 @@ export default {
   opacity: 0;
   cursor: pointer;
 }
-.btn-map {
+.btn-map,
+.btn-map2 {
   width: 100%;
   background: #016bd4;
   color: #fff;
   font-weight: 700;
   font-size: 14px;
+}
+.btn-map2 {
+  width: 40%;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 24px;
+  padding: 6px 12px;
 }
 input,
 textarea,
@@ -416,6 +419,7 @@ textarea.border-danger::placeholder {
   position: absolute;
   width: 0;
   height: 0;
+  margin: 8px 0;
   border-left: 6px solid transparent;
   border-right: 6px solid transparent;
   border-top: 6px solid #fff;
@@ -454,6 +458,12 @@ textarea.border-danger::placeholder {
 @media screen and (max-width: 596px) {
   .optional {
     right: -110%;
+  }
+  .btn-map2 {
+    width: 100%;
+  }
+  .triangle {
+    margin-top: 8px;
   }
 }
 </style>
