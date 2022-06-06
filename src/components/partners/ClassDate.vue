@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isClassTrue" class="position-relative">
+  <div v-if="isClassTrue" @click.stop="" class="position-relative">
     <div class="hours-dd">
       <p>Выберите дни недели</p>
       <div class="weekDays-selector">
@@ -113,5 +113,11 @@ export default {
 .weekDays-selector div.active {
   background: #016bd4;
   color: #ffffff;
+}
+@media screen and (max-width: 576px) {
+  .hours-dd {
+    min-width: 345px;
+    left: 0;
+  }
 }
 </style>

@@ -24,7 +24,7 @@
     ></vue-timepicker>
   </div>
   <div class="hours-action d-flex justify-content-between">
-    <button @click="cancel" class="btn btn-outline-white">Отмена</button>
+    <button @click="cancel" class="btn btn-outline-white">Закрыть</button>
     <button @click="saveDate" class="btn">Сохранить</button>
   </div>
 </template>

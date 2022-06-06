@@ -16,7 +16,10 @@
   <base-dialog :show="isLoading && !isSubmitted">
     <template #default>
       <div class="form-task text-center">
-        <h2>Загрузка...</h2>
+        <h2>
+          Загрузка
+          <span class="mt-1"><img src="../assets/loader.gif" alt="" /></span>
+        </h2>
       </div>
     </template>
   </base-dialog>
@@ -353,8 +356,6 @@ export default {
         }
 
         let fileData = new FormData();
-
-        // fileData.append("image", this.images);
         fileData.append(
           "class",
           JSON.stringify({
@@ -376,9 +377,7 @@ export default {
                 type_age: this.typeAge,
                 number_visitors: this.visits,
                 price: this.removedPrice,
-                // video: this.videoFile,
                 hashtag: this.hashtags,
-                // image: this.images,
                 class_date: this.classDates,
               },
             ],
@@ -394,7 +393,6 @@ export default {
         let config = {
           headers: {
             "Content-Type": "multipart/form-data",
-            // "Content-Type": "image/png",
           },
         };
         this.isLoading = true;
@@ -404,7 +402,6 @@ export default {
           config
         );
         this.isLoading = false;
-
         this.isSubmitted = true;
       } catch (e) {
         console.log(e.message);
@@ -474,6 +471,9 @@ export default {
 </script>
 
 <style scoped>
+h2 {
+  margin-bottom: 0;
+}
 section {
   overflow-x: hidden;
 }
@@ -490,6 +490,10 @@ img {
 .form-task img {
   width: 150px;
   margin: 2rem 0;
+}
+.form-task span img {
+  width: 24px;
+  padding-top: 12px;
 }
 .content-form {
   width: 70%;

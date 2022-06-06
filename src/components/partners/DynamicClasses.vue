@@ -1,141 +1,151 @@
 <template>
-  <div class="d-flex justify-content-between align-items-center mt-5 mb-3">
-    <h4 class="">{{ each > 1 ? `Секция ${each}` : "Регистрация секции" }}</h4>
-    <p
-      v-if="each > 1"
-      @click="$emit('deleteClass', each)"
-      class="text-danger mb-2 delete-p"
-    >
-      Удалить секцию
-    </p>
-  </div>
-
-  <div class="input-group mb-3">
-    <input
-      v-model.lazy="className"
-      type="text"
-      class="form-control border"
-      :class="isError && !className ? 'border-danger' : ''"
-      placeholder="Название секции (например: йога, плавание, бодибилдинг)"
-    />
-  </div>
-  <div class="input-group mb-3">
-    <input
-      v-model.lazy="teacherName"
-      type="text"
-      class="form-control border"
-      :class="isError && !teacherName ? 'border-danger' : ''"
-      placeholder="Имя Фамилия тренера"
-    />
-  </div>
-  <div class="mb-3">
-    <p class="fw-bold mb-2">С чем ассоциируется данная секция</p>
-    <base-drop-down
-      :options="sections"
-      :multiselect="true"
-      @multi="getFacilities"
-      :isError="isError"
-      default="Не выбрано"
-    ></base-drop-down>
-  </div>
-  <div class="mb-3">
-    <p class="fw-bold mb-2">Вид тренировок</p>
-    <base-drop-down
-      :options="[
-        { id: 'individual', name: 'Индивидуальные' },
-        { id: 'group', name: 'Групповые' },
-      ]"
-      @input="getTrainType"
-      :isError="isError"
-      default="Не выбрано"
-    ></base-drop-down>
-  </div>
-  <div class="mb-3">
-    <p class="fw-bold mb-2">Возрастная аудитория</p>
-    <base-drop-down
-      :options="[
-        { id: 'old', name: 'Для взрослых' },
-        { id: 'teenager', name: 'Для детей' },
-      ]"
-      @input="getAge"
-      :isError="isError"
-      default="Не выбрано"
-    ></base-drop-down>
-  </div>
-  <div class="mb-3">
-    <p class="fw-bold mb-2">Количество посещений в абонименте</p>
-    <input
-      v-model="visits"
-      type="number"
-      @input="converV()"
-      min="0"
-      class="form-control border"
-      :class="isError && !visits ? 'border-danger' : ''"
-      placeholder="Введите количество посещений"
-    />
-  </div>
-  <div class="input-group mb-3">
-    <input
-      v-model="price"
-      type="text"
-      @input="convertP()"
-      min="0"
-      class="form-control border"
-      :class="isError && !price ? 'border-danger' : ''"
-      placeholder="Стоимость абонимента"
-    />
-    <span class="input-group-text">СУМ</span>
-  </div>
-  <div class="mb-3">
-    <button @click="classVisible = !classVisible" class="btn-map2">
-      Добавить расписание
-      <span class="triangle mx-2" :class="classVisible ? 'open-t' : ''"></span>
-    </button>
-    <class-date
-      :isClassTrue="classVisible"
-      @close-opening="classVisible = false"
-    ></class-date>
-  </div>
-  <p
-    class="mb-2 photo-header"
-    :class="isError && !images.length ? 'text-danger' : ''"
-  >
-    Фотографии секции
-  </p>
-  <div class="d-flex justify-content-between mb-3">
-    <image-upload @input="addImage" @r-input="removeImg"></image-upload>
-    <image-upload @input="addImage" @r-input="removeImg"></image-upload>
-    <image-upload @input="addImage" @r-input="removeImg"></image-upload>
-    <image-upload @input="addImage" @r-input="removeImg"></image-upload>
-    <image-upload @input="addImage" @r-input="removeImg"></image-upload>
-  </div>
-  <div class="input-group v-w mb-3">
-    <div class="vid-btn-wrapper d-flex">
-      <button>Добавить видео</button>
-      <input type="file" accept="video/*" @change="handleFileUpload($event)" />
-      <p class="optional">Не обязательно</p>
+  <div @click="closeDateOut">
+    <div class="d-flex justify-content-between align-items-center mt-5 mb-3">
+      <h4 class="">{{ each > 1 ? `Секция ${each}` : "Регистрация секции" }}</h4>
+      <p
+        v-if="each > 1"
+        @click="$emit('deleteClass', each)"
+        class="text-danger mb-2 delete-p"
+      >
+        Удалить секцию
+      </p>
     </div>
-    <div class="w-100">
-      <span @click.stop="deleteVid" class="v-delete">x</span>
-      <video
-        class="w-100 my-3"
-        v-show="file != ''"
-        id="video-preview"
-        controls
-        type="video/mp4"
-        :muted="file == ''"
-        autoplay
+
+    <div class="input-group mb-3">
+      <input
+        v-model.lazy="className"
+        type="text"
+        class="form-control border"
+        :class="isError && !className ? 'border-danger' : ''"
+        placeholder="Название секции (например: йога, плавание, бодибилдинг)"
       />
     </div>
-  </div>
-  <div class="input-group mb-3">
-    <textarea
-      v-model.lazy="classDesc"
-      class="form-control border"
-      :class="isError && !classDesc ? 'border-danger' : ''"
-      rows="3"
-      placeholder="Описание секции"
-    ></textarea>
+    <div class="input-group mb-3">
+      <input
+        v-model.lazy="teacherName"
+        type="text"
+        class="form-control border"
+        :class="isError && !teacherName ? 'border-danger' : ''"
+        placeholder="Имя Фамилия тренера"
+      />
+    </div>
+    <div class="mb-3">
+      <p class="fw-bold mb-2">С чем ассоциируется данная секция</p>
+      <base-drop-down
+        :options="sections"
+        :multiselect="true"
+        @multi="getFacilities"
+        :isError="isError"
+        default="Не выбрано"
+      ></base-drop-down>
+    </div>
+    <div class="mb-3">
+      <p class="fw-bold mb-2">Вид тренировок</p>
+      <base-drop-down
+        :options="[
+          { id: 'individual', name: 'Индивидуальные' },
+          { id: 'group', name: 'Групповые' },
+        ]"
+        @input="getTrainType"
+        :isError="isError"
+        default="Не выбрано"
+      ></base-drop-down>
+    </div>
+    <div class="mb-3">
+      <p class="fw-bold mb-2">Возрастная аудитория</p>
+      <base-drop-down
+        :options="[
+          { id: 'old', name: 'Для взрослых' },
+          { id: 'teenager', name: 'Для детей' },
+        ]"
+        @input="getAge"
+        :isError="isError"
+        default="Не выбрано"
+      ></base-drop-down>
+    </div>
+    <div class="mb-3">
+      <p class="fw-bold mb-2">Количество посещений в абонименте</p>
+      <input
+        v-model="visits"
+        type="number"
+        @input="converV()"
+        min="0"
+        class="form-control border"
+        :class="isError && !visits ? 'border-danger' : ''"
+        placeholder="Введите количество посещений"
+      />
+    </div>
+    <p class="fw-bold mb-2">Стоимость абонимента</p>
+    <div class="input-group mb-3">
+      <input
+        v-model="price"
+        type="text"
+        @input="convertP()"
+        min="0"
+        class="form-control border"
+        :class="isError && !price ? 'border-danger' : ''"
+        placeholder="Введите cтоимость абонимента"
+      />
+      <span class="input-group-text">СУМ</span>
+    </div>
+    <div class="mb-3">
+      <button @click.stop="classVisible = !classVisible" class="btn-map2">
+        Добавить расписание
+        <span
+          class="triangle mx-2"
+          :class="classVisible ? 'open-t' : ''"
+        ></span>
+      </button>
+      <class-date
+        :isClassTrue="classVisible"
+        @close-opening="classVisible = false"
+      ></class-date>
+    </div>
+    <p
+      class="mb-2 photo-header"
+      :class="isError && !images.length ? 'text-danger' : ''"
+    >
+      Фотографии секции
+    </p>
+    <div class="d-flex justify-content-between mb-3">
+      <image-upload @input="addImage" @r-input="removeImg"></image-upload>
+      <image-upload @input="addImage" @r-input="removeImg"></image-upload>
+      <image-upload @input="addImage" @r-input="removeImg"></image-upload>
+      <image-upload @input="addImage" @r-input="removeImg"></image-upload>
+      <image-upload @input="addImage" @r-input="removeImg"></image-upload>
+    </div>
+    <div class="input-group v-w mb-3">
+      <div class="vid-btn-wrapper d-flex">
+        <button>Добавить видео</button>
+        <input
+          type="file"
+          accept="video/*"
+          @change="handleFileUpload($event)"
+        />
+        <p class="optional">Не обязательно</p>
+      </div>
+      <div class="w-100">
+        <span @click.stop="deleteVid" class="v-delete">x</span>
+        <video
+          class="w-100 my-3"
+          v-show="file != ''"
+          id="video-preview"
+          controls
+          type="video/mp4"
+          :muted="file == ''"
+          autoplay
+        />
+      </div>
+    </div>
+    <div class="input-group mb-3">
+      <textarea
+        v-model.lazy="classDesc"
+        class="form-control border"
+        :class="isError && !classDesc ? 'border-danger' : ''"
+        rows="3"
+        placeholder="Описание секции"
+      ></textarea>
+    </div>
   </div>
 </template>
 
@@ -166,6 +176,9 @@ export default {
     };
   },
   methods: {
+    closeDateOut() {
+      if (this.classVisible) this.classVisible = false;
+    },
     converV() {
       if (this.visits < 0) this.visits = Math.abs(this.visits);
     },
