@@ -29,7 +29,7 @@
         placeholder="Имя Фамилия тренера"
       />
     </div>
-    <div v-if="sections.length" class="mb-3">
+    <div class="mb-3">
       <p class="fw-bold mb-2">С чем ассоциируется данная секция</p>
       <base-drop-down
         :options="sections"

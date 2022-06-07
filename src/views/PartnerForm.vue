@@ -158,16 +158,18 @@
                 ></base-drop-down>
               </div>
               <hr class="mt-5 mb-5 custom_hr" />
-              <template v-for="eaachClass in classesQty" :key="eaachClass">
-                <dynamic-classes
-                  :each="eaachClass"
-                  :sections="partnerQuestions[0].variants"
-                  :isError="isEmpty"
-                  @deleteClass="updateClass"
-                  @changeImg="updateImg"
-                  @changeVid="updateVid"
-                  @updateValues="updateVal"
-                ></dynamic-classes>
+              <template v-if="partnerQuestions.length">
+                <template v-for="eaachClass in classesQty" :key="eaachClass">
+                  <dynamic-classes
+                    :each="eaachClass"
+                    :sections="partnerQuestions[0].variants"
+                    :isError="isEmpty"
+                    @deleteClass="updateClass"
+                    @changeImg="updateImg"
+                    @changeVid="updateVid"
+                    @updateValues="updateVal"
+                  ></dynamic-classes>
+                </template>
               </template>
               <!-- <div class="input-group mb-3">
                 <button @click="addClass" class="btn btn-more p-4">
@@ -399,6 +401,7 @@ export default {
           fileData,
           config
         );
+        this.$store.dispatch("resetWeeks");
         this.isLoading = false;
         this.isSubmitted = true;
       } catch (e) {

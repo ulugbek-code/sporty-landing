@@ -8,4 +8,7 @@ export default {
   removeEachWeekDates(state, payload) {
     state.eachWeekDates = state.eachWeekDates.filter((d) => d != payload);
   },
+  reset(state) {
+    state.eachWeekDates = [];
+  },
 };
