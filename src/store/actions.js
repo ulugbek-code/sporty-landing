@@ -8,4 +8,7 @@ export default {
       console.log(err);
     }
   },
+  resetWeeks(context) {
+    context.commit("reset");
+  },
 };
