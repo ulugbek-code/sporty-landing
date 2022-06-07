@@ -354,7 +354,7 @@ export default {
           return;
         }
         this.isLoading = true;
-        await axios.post("https://sporty.uz/api/v1/user/post/", {
+        await axios.post("https://cb92854.tmweb.ru/api/v1/user/post/", {
           gender: this.gender,
           birth_date: this.birthDate,
           height: this.personHeight,

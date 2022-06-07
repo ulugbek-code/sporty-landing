@@ -158,18 +158,16 @@
                 ></base-drop-down>
               </div>
               <hr class="mt-5 mb-5 custom_hr" />
-              <template v-if="partnerQuestions.length">
-                <template v-for="eaachClass in classesQty" :key="eaachClass">
-                  <dynamic-classes
-                    :each="eaachClass"
-                    :sections="partnerQuestions[0].variants"
-                    :isError="isEmpty"
-                    @deleteClass="updateClass"
-                    @changeImg="updateImg"
-                    @changeVid="updateVid"
-                    @updateValues="updateVal"
-                  ></dynamic-classes>
-                </template>
+              <template v-for="eaachClass in classesQty" :key="eaachClass">
+                <dynamic-classes
+                  :each="eaachClass"
+                  :sections="partnerQuestions[0].variants"
+                  :isError="isEmpty"
+                  @deleteClass="updateClass"
+                  @changeImg="updateImg"
+                  @changeVid="updateVid"
+                  @updateValues="updateVal"
+                ></dynamic-classes>
               </template>
               <!-- <div class="input-group mb-3">
                 <button @click="addClass" class="btn btn-more p-4">
@@ -397,7 +395,7 @@ export default {
         };
         this.isLoading = true;
         await axios.post(
-          "https://sporty.uz/api/v1/class/post/",
+          "https://cb92854.tmweb.ru/api/v1/class/post/",
           fileData,
           config
         );
