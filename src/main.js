@@ -17,13 +17,8 @@ import BaseDropDown from "./components/BaseDropDown.vue";
 window.apiBaseUrl = 'http://ec2-3-91-8-58.compute-1.amazonaws.com/api/v1/'
 
 window.getEnvParam = function (param, defaultValue = null) {
-    console.log(param)
-    console.log(process.env)
-
     return process.env[`VUE_APP_${param}`] | defaultValue
 }
-
-console.log(process.env.VUE_APP_API_BASE_URL)
 
 const app = createApp(App);
 app.use(router);
