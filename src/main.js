@@ -1,5 +1,5 @@
 import "bootstrap/dist/css/bootstrap.css";
-import { createApp } from "vue";
+import {createApp} from "vue";
 import App from "./App.vue";
 import router from "./router.js";
 import store from "./store/index.js";
@@ -13,6 +13,17 @@ import BaseDropDown from "./components/BaseDropDown.vue";
 //   enterprise: false,
 //   version: "2.1",
 // };
+
+window.apiBaseUrl = 'http://ec2-3-91-8-58.compute-1.amazonaws.com/api/v1/'
+
+window.getEnvParam = function (param, defaultValue = null) {
+    console.log(param)
+    console.log(process.env)
+
+    return process.env[`VUE_APP_${param}`] | defaultValue
+}
+
+console.log(process.env.VUE_APP_API_BASE_URL)
 
 const app = createApp(App);
 app.use(router);
