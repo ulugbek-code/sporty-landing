@@ -8,7 +8,7 @@
       <div class="row py-4">
         <div class="col-12">
           <div class="logo_detail">
-            <img src="../assets/sporty-logo.svg" alt="" />
+            <img src="../assets/white-logo.svg" alt="" />
           </div>
         </div>
       </div>
@@ -52,7 +52,8 @@ export default {};
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(47, 136, 213, 0.25);
+  background: rgba(0, 0, 0, 1);
+  opacity: 0.5;
   z-index: 0;
 }
 video {
@@ -62,6 +63,7 @@ video {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  /* opacity: 0.6; */
   z-index: -1;
 }
 section {
@@ -119,7 +121,8 @@ img {
   flex-direction: column;
 }
 h1 {
-  color: #1b1b1d;
+  /* color: #1b1b1d; */
+  color: #fff;
   font-weight: 600;
 }
 button {
