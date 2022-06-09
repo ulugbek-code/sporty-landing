@@ -1,7 +1,9 @@
 <template>
+  <div class="overlay"></div>
+  <video src="../assets/new-video.mp4" loop autoplay type="mp4"></video>
   <section>
-    <div class="first-circle"></div>
-    <div class="second-circle"></div>
+    <!-- <div class="first-circle"></div>
+    <div class="second-circle"></div> -->
     <div class="container">
       <div class="row py-4">
         <div class="col-12">
@@ -30,9 +32,9 @@
           </div>
         </div>
         <div class="col-md-6">
-          <div class="man-image float-end">
+          <!-- <div class="man-image float-end">
             <img src="../assets/sports-man.png" alt="" />
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
@@ -44,11 +46,29 @@ export default {};
 </script>
 
 <style scoped>
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(47, 136, 213, 0.25);
+  z-index: 0;
+}
+video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+}
 section {
   position: relative;
   overflow-x: hidden;
 }
-.first-circle {
+/* .first-circle {
   width: 700px;
   height: 700px;
   position: absolute;
@@ -73,17 +93,17 @@ section {
   border-radius: 50%;
   background: linear-gradient(0deg, #00ccff 0%, #003cbf 100%);
   z-index: -1;
-}
+} */
 .logo_detail {
   width: 112px;
 }
-.man-image {
+/* .man-image {
   width: 580px;
 }
 .man-image img {
   position: relative;
   left: 20%;
-}
+} */
 img {
   width: 100%;
 }
@@ -118,7 +138,7 @@ button:hover {
   background: linear-gradient(180deg, #00ccff -107.29%, #003cbf 102.56%);
 }
 @media screen and (max-width: 1112px) {
-  .first-circle {
+  /* .first-circle {
     width: 600px;
     height: 600px;
   }
@@ -128,14 +148,14 @@ button:hover {
   }
   .man-image {
     width: 520px;
-  }
+  } */
   button {
     width: 250px;
     height: 50px;
   }
 }
 @media screen and (max-width: 768px) {
-  .first-circle {
+  /* .first-circle {
     width: 300px;
     height: 300px;
   }
@@ -145,7 +165,7 @@ button:hover {
   }
   .man-image {
     display: none;
-  }
+  } */
   .q-div {
     justify-content: flex-end;
   }
