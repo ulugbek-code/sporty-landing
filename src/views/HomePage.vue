@@ -1,6 +1,6 @@
 <template>
   <div class="overlay"></div>
-  <video src="../assets/new-video.mp4" loop autoplay type="mp4"></video>
+  <video src="../assets/sporty.mp4" muted loop autoplay type="mp4"></video>
   <section>
     <!-- <div class="first-circle"></div>
     <div class="second-circle"></div> -->
