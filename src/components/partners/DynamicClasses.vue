@@ -184,15 +184,10 @@ export default {
     },
     convertP() {
       if (isNaN(this.price[0])) this.price = "";
-      this.price = this.price.split(" ").join("").split("");
-      let formatted = [];
-      while (this.price.length) {
-        for (let i = 0; i < 3 && this.price.length; i++) {
-          formatted.push(this.price.shift());
-        }
-        if (this.price.length) formatted.push(" ");
-      }
-      this.price = formatted.join("");
+
+      this.price = this.price.replaceAll(" ", "");
+      let x = Number(this.price);
+      this.price = x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
       if (this.price < 0) this.price = Math.abs(this.price);
     },
     getAge(val) {
