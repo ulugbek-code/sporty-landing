@@ -396,8 +396,13 @@ export default {
           },
         };
         this.isLoading = true;
+        // await axios.post(
+        //   window.getEnvParam("API_BASE_URL") + "class/post/",
+        //   fileData,
+        //   config
+        // );
         await axios.post(
-      window.getEnvParam('API_BASE_URL')+"class/post/",
+          "https://cb92854.tmweb.ru/api/v1/class/post/",
           fileData,
           config
         );

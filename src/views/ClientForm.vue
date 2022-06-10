@@ -305,28 +305,16 @@ export default {
   methods: {
     convertSpend() {
       if (isNaN(this.howSpend[0])) this.howSpend = "";
-      this.howSpend = this.howSpend.split(" ").join("").split("");
-      let formatted = [];
-      while (this.howSpend.length) {
-        for (let i = 0; i < 3 && this.howSpend.length; i++) {
-          formatted.push(this.howSpend.shift());
-        }
-        if (this.howSpend.length) formatted.push(" ");
-      }
-      this.howSpend = formatted.join("");
+      this.howSpend = this.howSpend.replaceAll(" ", "");
+      let x = Number(this.howSpend);
+      this.howSpend = x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
       if (this.howSpend < 0) this.howSpend = Math.abs(this.howSpend);
     },
     convertWouldSpend() {
       if (isNaN(this.howWouldSpend[0])) this.howWouldSpend = "";
-      this.howWouldSpend = this.howWouldSpend.split(" ").join("").split("");
-      let formatted = [];
-      while (this.howWouldSpend.length) {
-        for (let i = 0; i < 3 && this.howWouldSpend.length; i++) {
-          formatted.push(this.howWouldSpend.shift());
-        }
-        if (this.howWouldSpend.length) formatted.push(" ");
-      }
-      this.howWouldSpend = formatted.join("");
+      this.howWouldSpend = this.howWouldSpend.replaceAll(" ", "");
+      let x = Number(this.howWouldSpend);
+      this.howWouldSpend = x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
       if (this.howWouldSpend < 0)
         this.howWouldSpend = Math.abs(this.howWouldSpend);
     },
