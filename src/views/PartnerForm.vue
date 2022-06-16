@@ -50,7 +50,7 @@
           <!-- {{ isLoad }} -->
           <div class="header-form">
             <router-link to="/">
-              <img src="../assets/sporty-logo.svg" alt="" />
+              <img src="../assets/logo.svg" alt="" />
             </router-link>
           </div>
           <div class="content-form mt-5">
@@ -59,7 +59,8 @@
               <p>Вы только заполняете форму, мы привлекаем клиентов</p>
             </div>
             <form @submit.prevent>
-              <h4 class="mb-2">Регистрация зала</h4>
+              <h4 class="mb-4">Регистрация заведения</h4>
+              <p class="fw-bold mb-2">Юридическое название</p>
               <div class="input-group mb-3">
                 <input
                   v-model="legalName"
@@ -69,6 +70,7 @@
                   placeholder="Юридическое название"
                 />
               </div>
+              <p class="fw-bold mb-2">Контактный номер телефона</p>
               <div class="tel-container input-group mb-3">
                 <span class="input-group-text"
                   ><img
@@ -86,13 +88,23 @@
                   placeholder="Номер телефона"
                 />
               </div>
+              <p class="fw-bold mb-2">Контактное имя и фамилия</p>
+              <div class="input-group mb-3">
+                <input
+                  v-model="userName"
+                  type="text"
+                  class="form-control border"
+                  :class="isEmpty && !userName ? 'border-danger' : ''"
+                  placeholder="Имя Фамилия"
+                />
+              </div>
               <div class="input-group justify-content-between hello mb-2">
                 <div class="d-flex justify-content-between address-wrapper">
                   <p
                     class="py-2 fw-bold"
                     :class="isEmpty && !openingDate.length ? 'text-danger' : ''"
                   >
-                    Часы работы зала
+                    Часы работы
                   </p>
                   <div>
                     <template v-for="gym in gymHoursOpeningQty" :key="gym">
@@ -138,6 +150,7 @@
               <div v-if="isLocationOpen" class="my-4">
                 <map-uzb @sendCoords="getCoords"></map-uzb>
               </div>
+              <p class="fw-bold mb-2">О заведении</p>
               <div class="input-group mb-3">
                 <textarea
                   v-model="gymDesc"
@@ -162,12 +175,14 @@
                 <template v-for="eaachClass in classesQty" :key="eaachClass">
                   <dynamic-classes
                     :each="eaachClass"
-                    :sections="partnerQuestions[0].variants"
+                    :sections="partnerQuestions[1].variants"
                     :isError="isEmpty"
                     @deleteClass="updateClass"
                     @changeImg="updateImg"
                     @changeVid="updateVid"
                     @updateValues="updateVal"
+                    @updateEvent="updateEvents"
+                    @updatedLvl="updateLevel"
                   ></dynamic-classes>
                 </template>
               </template>
@@ -220,23 +235,14 @@ export default {
   },
   data() {
     return {
-      // settings: {
-      //   apiKey: "456787f4-294f-4b71-9233-05be8554dd23",
-      //   lang: "ru_RU",
-      //   coordorder: "latlong",
-      //   enterprise: false,
-      //   version: "2.1",
-      // },
-      // watcher: null,
-      // coords: { latitude: 0, longitude: 0 },
-      // isSupported: "navigator" in window && "geolocation" in navigator,
-      //
       isLocationOpen: false,
       isNotSubmitted: false,
       isLoading: false,
       isSubmitted: false,
       isEmpty: false,
+      //
       legalName: "",
+      userName: "",
       phoneNumber: "",
       gymDesc: "",
       location: "",
@@ -244,16 +250,13 @@ export default {
       facilities: [],
       //
       className: "",
-      teacherName: "",
-      activities: "activities",
       classDesc: "",
       typeTraining: "",
-      typeAge: "",
-      visits: null,
       videoFile: null,
       hashtags: [],
-      price: null,
       images: [],
+      events: [],
+      levels: [],
       // classDates: [],
       isConfirm: false,
       gymHoursOpeningQty: [1],
@@ -261,11 +264,6 @@ export default {
     };
   },
   computed: {
-    removedPrice() {
-      if (this.price) {
-        return this.price.replace(/\s/g, "");
-      } else return "";
-    },
     classDates() {
       return this.$store.getters.eachWeekDates;
     },
@@ -289,12 +287,6 @@ export default {
         (question) => question.status === "partner"
       );
     },
-    // lat() {
-    //   return this.coords.latitude;
-    // },
-    // lng() {
-    //   return this.coords.longitude;
-    // },
     getLocation() {
       return `Ваши координаты: ${
         this.location.length ? this.location[0].toFixed(2) : "еще нет"
@@ -302,6 +294,12 @@ export default {
     },
   },
   methods: {
+    updateLevel(val) {
+      this.levels = val;
+    },
+    updateEvents(val) {
+      this.events = val;
+    },
     getCoords(val) {
       this.location = val;
     },
@@ -312,19 +310,13 @@ export default {
       this.openingDate = this.openingDate.filter(
         (date) => date.qty !== val.qty
       );
-
       this.openingDate.push(val);
-      // console.log(this.filteredOpeningDate);
     },
     updateVal(val) {
       this.className = val.name;
-      this.teacherName = val.teacher;
       this.classDesc = val.desc;
       this.typeTraining = val.trainTy;
-      this.typeAge = val.ageTy;
-      this.visits = val.visit;
       this.hashtags = val.fac;
-      this.price = val.price;
     },
     updateVid(val) {
       this.videoFile = val;
@@ -337,19 +329,17 @@ export default {
         if (
           !this.legalName ||
           !this.phoneNumber ||
+          !this.userName ||
           !this.gymDesc ||
           !this.location.length ||
           !this.openingDate.length ||
           !this.facilities.length ||
           !this.className ||
-          !this.teacherName ||
           !this.classDesc ||
           !this.typeTraining ||
-          !this.typeAge ||
-          !this.visits ||
           !this.hashtags.length ||
-          !this.price ||
-          !this.images.length
+          !this.images.length ||
+          !this.levels.length
         ) {
           this.isEmpty = true;
           return;
@@ -359,9 +349,10 @@ export default {
         fileData.append(
           "class",
           JSON.stringify({
-            gym: {
+            module: {
               legal_name: this.legalName,
               phone_number: this.resolvedNumber,
+              contact_name: this.userName,
               description: this.gymDesc,
               location: this.location,
               facilities: this.facilities,
@@ -370,15 +361,12 @@ export default {
             class: [
               {
                 name: this.className,
-                teacher_name: this.teacherName,
-                activities: "Activities",
                 description: this.classDesc,
                 type_training: this.typeTraining,
-                type_age: this.typeAge,
-                number_visitors: this.visits,
-                price: this.removedPrice,
-                hashtag: this.hashtags,
+                facilities: this.hashtags,
                 class_date: this.classDates,
+                level: this.levels,
+                events: this.events,
               },
             ],
           })
@@ -463,16 +451,6 @@ export default {
       setTimeout(() => (this.isEmpty = false), 2500);
     },
   },
-  // async mounted() {
-  //   if (this.isSupported) {
-  //     this.watcher = navigator.geolocation.watchPosition(
-  //       (position) => (this.coords = position.coords)
-  //     );
-  //   }
-  // },
-  // unmounted() {
-  //   if (this.watcher) navigator.geolocation.clearWatch(this.watcher);
-  // },
 };
 </script>
 
@@ -487,7 +465,7 @@ section {
   padding: 0;
 }
 .header-form {
-  width: 100px;
+  width: 80px;
 }
 img {
   width: 100%;

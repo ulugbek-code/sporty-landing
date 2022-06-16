@@ -1,6 +1,6 @@
 <template>
   <div class="overlay"></div>
-  <video src="../assets/sporty.mp4" muted loop autoplay type="mp4"></video>
+  <!-- <video src="../assets/sporty.mp4" muted loop autoplay type="mp4"></video> -->
   <section>
     <!-- <div class="first-circle"></div>
     <div class="second-circle"></div> -->
@@ -13,7 +13,7 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-md-6 q-div">
+        <div class="col-12 q-div">
           <div class="q-wrapper">
             <div class="question">
               <h1>
@@ -21,21 +21,21 @@
                 вы относитесь?
               </h1>
             </div>
-            <div class="actions mt-3">
+            <div class="actions text-center mt-3">
               <router-link to="/partners" class="">
-                <button class="">Владелец зала / Тренер</button>
+                <button class="">Бизнес</button>
               </router-link>
               <router-link to="/clients">
-                <button class="mt-3">Атлет</button>
+                <button class="mt-3">Студент</button>
               </router-link>
             </div>
           </div>
         </div>
-        <div class="col-md-6">
-          <!-- <div class="man-image float-end">
+        <!-- <div class="col-md-6">
+          <div class="man-image float-end">
             <img src="../assets/sports-man.png" alt="" />
-          </div> -->
-        </div>
+          </div>
+        </div> -->
       </div>
     </div>
   </section>
@@ -52,23 +52,25 @@ export default {};
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 1);
-  opacity: 0.5;
+  background: url("../assets/back.png");
+  background-size: cover;
   z-index: 0;
 }
-video {
+/* video {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  /* opacity: 0.6; */
   z-index: -1;
-}
+} */
 section {
   position: relative;
   overflow-x: hidden;
+  background: rgba(1, 1, 1, 0.7);
+  min-height: 100vh;
+  z-index: 1;
 }
 /* .first-circle {
   width: 700px;

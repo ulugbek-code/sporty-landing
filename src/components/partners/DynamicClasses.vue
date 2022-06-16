@@ -11,22 +11,14 @@
       </p>
     </div>
 
+    <p class="fw-bold mb-2">Название секции</p>
     <div class="input-group mb-3">
       <input
         v-model.lazy="className"
         type="text"
         class="form-control border"
         :class="isError && !className ? 'border-danger' : ''"
-        placeholder="Название секции (например: йога, плавание, бодибилдинг)"
-      />
-    </div>
-    <div class="input-group mb-3">
-      <input
-        v-model.lazy="teacherName"
-        type="text"
-        class="form-control border"
-        :class="isError && !teacherName ? 'border-danger' : ''"
-        placeholder="Имя Фамилия тренера"
+        placeholder="Название секции (например: математика, английский, немецкий)"
       />
     </div>
     <div class="mb-3">
@@ -40,7 +32,7 @@
       ></base-drop-down>
     </div>
     <div class="mb-3">
-      <p class="fw-bold mb-2">Вид тренировок</p>
+      <p class="fw-bold mb-2">Вид занятий</p>
       <base-drop-down
         :options="[
           { id: 'individual', name: 'Индивидуальные' },
@@ -51,42 +43,18 @@
         default="Не выбрано"
       ></base-drop-down>
     </div>
-    <div class="mb-3">
-      <p class="fw-bold mb-2">Возрастная аудитория</p>
-      <base-drop-down
-        :options="[
-          { id: 'old', name: 'Для взрослых' },
-          { id: 'teenager', name: 'Для детей' },
-        ]"
-        @input="getAge"
+    <div class="level" v-for="level in levels" :key="level.id">
+      <each-level
+        :level="level"
         :isError="isError"
-        default="Не выбрано"
-      ></base-drop-down>
+        @del-lev="deleteLevel"
+        @updateLevel="updLevel"
+      ></each-level>
     </div>
-    <div class="mb-3">
-      <p class="fw-bold mb-2">Количество посещений в абонименте</p>
-      <input
-        v-model="visits"
-        type="number"
-        @input="converV()"
-        min="0"
-        class="form-control border"
-        :class="isError && !visits ? 'border-danger' : ''"
-        placeholder="Введите количество посещений"
-      />
-    </div>
-    <p class="fw-bold mb-2">Стоимость абонимента</p>
     <div class="input-group mb-3">
-      <input
-        v-model="price"
-        type="text"
-        @input="convertP()"
-        min="0"
-        class="form-control border"
-        :class="isError && !price ? 'border-danger' : ''"
-        placeholder="Введите cтоимость абонимента"
-      />
-      <span class="input-group-text">СУМ</span>
+      <button @click="addLevel" class="btn btn-dashed py-2">
+        Добавить еще уровень
+      </button>
     </div>
     <div class="mb-3">
       <button @click.stop="classVisible = !classVisible" class="btn-map2">
@@ -146,52 +114,114 @@
         placeholder="Описание секции"
       ></textarea>
     </div>
+    <div class="events" v-for="event in events" :key="event.id">
+      <each-event
+        :event="event"
+        :isError="isError"
+        @remove-event="deleteEvent"
+        @update-event="changeEvent"
+      ></each-event>
+    </div>
+    <div class="input-group mb-3">
+      <button @click="addEvent" class="btn btn-dashed py-3">
+        {{ events.length ? "Добавить еще ивент" : "Добавить ивент" }}
+      </button>
+    </div>
   </div>
 </template>
 
 <script>
 import ImageUpload from "./ImageUpload.vue";
 import ClassDate from "./ClassDate.vue";
+import EachEvent from "./EachEvent.vue";
+import EachLevel from "./EachLevel.vue";
 export default {
   props: ["each", "sections", "isError"],
-  emits: ["deleteClass", "changeImg", "changeVid", "updateValues"],
+  emits: [
+    "deleteClass",
+    "changeImg",
+    "changeVid",
+    "updateValues",
+    "updateEvent",
+    "updatedLvl",
+  ],
   components: {
     ImageUpload,
     ClassDate,
+    EachEvent,
+    EachLevel,
   },
   data() {
     return {
       isEmpty: false,
       className: "",
-      teacherName: "",
       facilities: [],
       trainType: "",
-      ageType: "",
-      visits: null,
-      price: null,
       classVisible: false,
       file: "",
       images: [],
       classDesc: "",
+      events: [],
+      levels: [
+        {
+          id: "111",
+          name: "",
+          duration: "",
+          status: "",
+          number_students: "",
+          price: "",
+        },
+      ],
     };
   },
   methods: {
+    updLevel(val) {
+      this.levels = this.levels.map((level) => {
+        if (level.id === val.id) {
+          return val;
+        } else {
+          return level;
+        }
+      });
+      this.$emit("updatedLvl", this.levels);
+    },
+    deleteLevel(id) {
+      this.levels = this.levels.filter((event) => event.id !== id);
+    },
+    addLevel() {
+      this.levels.push({
+        id: "" + Date.now(),
+        name: "",
+        duration: "",
+        status: "",
+        number_students: "",
+        price: "",
+      });
+    },
+    changeEvent(val) {
+      this.events = this.events.map((event) => {
+        if (event.id === val.id) {
+          return val;
+        } else {
+          return event;
+        }
+      });
+      this.$emit("updateEvent", this.events);
+    },
+    deleteEvent(id) {
+      this.events = this.events.filter((event) => event.id !== id);
+    },
+    addEvent() {
+      this.events.push({
+        id: "" + Date.now(),
+        name: "",
+        date: "",
+        status: "",
+        description: "",
+      });
+    },
     closeDateOut() {
       if (this.classVisible) this.classVisible = false;
-    },
-    converV() {
-      if (this.visits < 0) this.visits = Math.abs(this.visits);
-    },
-    convertP() {
-      if (isNaN(this.price[0])) this.price = "";
-
-      this.price = this.price.replaceAll(" ", "");
-      let x = Number(this.price);
-      this.price = x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-      if (this.price < 0) this.price = Math.abs(this.price);
-    },
-    getAge(val) {
-      this.ageType = val.id;
     },
     getTrainType(val) {
       this.trainType = val.id;
@@ -211,8 +241,8 @@ export default {
     handleFileUpload(event) {
       if (event) {
         this.file = event.target.files[0];
-        if (Math.ceil(this.file.size / 1024) > 10240) {
-          alert("Pазмер видео больше 10 мб");
+        if (Math.ceil(this.file.size / 1024) > 20480) {
+          alert("Pазмер видео больше 20 мб");
           return;
         }
         this.$emit("changeVid", this.file);
@@ -238,96 +268,32 @@ export default {
     className(val) {
       this.$emit("updateValues", {
         name: val,
-        teacher: this.teacherName,
         fac: this.facilities,
         trainTy: this.trainType,
-        ageTy: this.ageType,
-        visit: this.visits,
-        price: this.price,
-        desc: this.classDesc,
-      });
-    },
-    teacherName(val) {
-      this.$emit("updateValues", {
-        name: this.className,
-        teacher: val,
-        fac: this.facilities,
-        trainTy: this.trainType,
-        ageTy: this.ageType,
-        visit: this.visits,
-        price: this.price,
         desc: this.classDesc,
       });
     },
     facilities(val) {
       this.$emit("updateValues", {
         name: this.className,
-        teacher: this.teacherName,
         fac: val,
         trainTy: this.trainType,
-        ageTy: this.ageType,
-        visit: this.visits,
-        price: this.price,
         desc: this.classDesc,
       });
     },
     trainType(val) {
       this.$emit("updateValues", {
         name: this.className,
-        teacher: this.teacherName,
         fac: this.facilities,
         trainTy: val,
-        ageTy: this.ageType,
-        visit: this.visits,
-        price: this.price,
-        desc: this.classDesc,
-      });
-    },
-    ageType(val) {
-      this.$emit("updateValues", {
-        name: this.className,
-        teacher: this.teacherName,
-        fac: this.facilities,
-        trainTy: this.trainType,
-        ageTy: val,
-        visit: this.visits,
-        price: this.price,
-        desc: this.classDesc,
-      });
-    },
-    visits(val) {
-      this.$emit("updateValues", {
-        name: this.className,
-        teacher: this.teacherName,
-        fac: this.facilities,
-        trainTy: this.trainType,
-        ageTy: this.ageType,
-        visit: val,
-        price: this.price,
-        desc: this.classDesc,
-      });
-    },
-    price(val) {
-      this.$emit("updateValues", {
-        name: this.className,
-        teacher: this.teacherName,
-        fac: this.facilities,
-        trainTy: this.trainType,
-        ageTy: this.ageType,
-        visit: this.visits,
-        price: val,
         desc: this.classDesc,
       });
     },
     classDesc(val) {
       this.$emit("updateValues", {
         name: this.className,
-        teacher: this.teacherName,
         fac: this.facilities,
         trainTy: this.trainType,
-        ageTy: this.ageType,
-        visit: this.visits,
-        price: this.price,
         desc: val,
       });
     },
@@ -336,6 +302,11 @@ export default {
 </script>
 
 <style scoped>
+.btn-dashed {
+  width: 100%;
+  color: #9d9d9d;
+  border: 2px dashed #dee2e6;
+}
 .vid-btn-wrapper {
   width: 40%;
   position: relative;

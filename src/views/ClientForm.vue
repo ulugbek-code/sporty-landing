@@ -48,7 +48,7 @@
         <div class="col-md-9 px-5 pt-4">
           <div class="header-form">
             <router-link to="/">
-              <img src="../assets/sporty-logo.svg" alt="" />
+              <img src="../assets/logo.svg" alt="" />
             </router-link>
           </div>
           <div class="content-header my-5">
@@ -57,62 +57,16 @@
           </div>
           <div v-if="userQuestions.length" class="content-form">
             <form @submit.prevent>
-              <div
-                class="res-container input-group justify-content-between mb-3"
-              >
-                <div class="gender-wrapper">
-                  <label class="mb-1">Ваш пол</label>
-                  <base-drop-down
-                    :isError="isEmpty"
-                    :options="[
-                      { id: 'male', name: 'Мужской' },
-                      { id: 'female', name: 'Женский' },
-                    ]"
-                    default="Не выбрано"
-                    @input="getGender"
-                  ></base-drop-down>
-                </div>
-                <div class="gender-wrapper">
-                  <label class="mb-1">Дата рождения</label>
-                  <input
-                    v-model="birthDate"
-                    type="date"
-                    class="form-control border"
-                    :class="isEmpty && !birthDate ? 'border-danger' : ''"
-                    required
-                  />
-                </div>
-              </div>
-              <div class="input-group justify-content-between mb-3">
-                <div class="gender-wrapper">
-                  <label class="mb-1">Ваш рост</label>
-                  <div class="input-group">
-                    <input
-                      v-model="personHeight"
-                      type="number"
-                      min="0"
-                      class="form-control border"
-                      :class="isEmpty && !personHeight ? 'border-danger' : ''"
-                      placeholder="Ваш рост (в метре 1.70)"
-                    />
-                    <span class="input-group-text">СМ</span>
-                  </div>
-                </div>
-                <div class="gender-wrapper">
-                  <label class="mb-1">Ваш вес</label>
-                  <div class="input-group">
-                    <input
-                      v-model="personWeight"
-                      type="number"
-                      min="0"
-                      class="form-control border"
-                      :class="isEmpty && !personWeight ? 'border-danger' : ''"
-                      placeholder="Ваш вес"
-                    />
-                    <span class="input-group-text">КГ</span>
-                  </div>
-                </div>
-              </div>
+              <label class="my-2">Дата вашего рождения</label>
+              <input
+                v-model="birthDate"
+                type="date"
+                class="form-control border mb-2"
+                :class="[
+                  isEmpty && !birthDate ? 'border-danger' : '',
+                  !birthDate.length ? 'empty' : '',
+                ]"
+              />
               <p class="fw-bold mb-2">Ваш город</p>
               <div v-if="userQuestions.length" class="input-group mb-3">
                 <base-drop-down
@@ -122,9 +76,7 @@
                   default="Не выбрано"
                 ></base-drop-down>
               </div>
-              <p class="fw-bold mb-2">
-                Ваши предпочитаемые виды занятия спортом
-              </p>
+              <p class="fw-bold mb-2">Чему вы хотите обучиться?</p>
               <div v-if="userQuestions.length" class="input-group mb-3">
                 <base-drop-down
                   :options="userQuestions[1].variants"
@@ -134,7 +86,9 @@
                   default="Не выбрано"
                 ></base-drop-down>
               </div>
-              <p class="fw-bold mb-2">Как часто вы упражняетесь?</p>
+              <p class="fw-bold mb-2">
+                Как часто вы посещаете образовательные учреждения?
+              </p>
               <div v-if="userQuestions.length" class="input-group mb-3">
                 <base-drop-down
                   :options="userQuestions[2].variants"
@@ -144,29 +98,19 @@
                 ></base-drop-down>
               </div>
               <p class="fw-bold mb-2">
-                Сколько времени вы проводите за упражнениями?
-              </p>
-              <div v-if="userQuestions.length" class="input-group mb-3">
-                <base-drop-down
-                  :options="userQuestions[3].variants"
-                  @input="getTimeSpendSport"
-                  :isError="isEmpty"
-                  default="Не выбрано"
-                ></base-drop-down>
-              </div>
-              <p class="fw-bold mb-2">
-                Покупаете ли вы абонимент в спортзал или другие занятия?
+                Покупаете ли вы абонемент в учебный центр или другие
+                образовательные учреждения?
               </p>
               <div class="input-group mb-3">
                 <base-drop-down
-                  :options="userQuestions[4].variants"
+                  :options="userQuestions[3].variants"
                   @input="getBuySubscription"
                   :isError="isEmpty"
                   default="Не выбрано"
                 ></base-drop-down>
               </div>
               <p class="fw-bold mb-2">
-                Сколько вы тратите на упражнения в месяц?
+                Сколько вы тратите на обучение в месяц?
               </p>
               <div class="input-group mb-3">
                 <input
@@ -181,8 +125,7 @@
                 <span class="input-group-text">СУМ</span>
               </div>
               <p class="fw-bold mb-2">
-                Какую сумму вы готовы тратить в месяц на занятия
-                спортом/посещение залов?
+                Какую сумму вы готовы тратить в месяц на учебные заведения?
               </p>
               <div class="input-group mb-3">
                 <input
@@ -197,23 +140,23 @@
                 <span class="input-group-text">СУМ</span>
               </div>
               <p class="fw-bold mb-2">
-                Если бы был абонимент на сумму указанную выше, вы бы посещали
-                эти секции?
+                Если бы был тариф на сумму указанную выше, вы бы посещали эти
+                секции?
               </p>
               <div class="input-group mb-3">
                 <base-drop-down
-                  :options="userQuestions[5].variants"
+                  :options="userQuestions[4].variants"
                   @input="getExpensiveSubs"
                   :isError="isEmpty"
                   default="Не выбрано"
                 ></base-drop-down>
               </div>
               <p class="fw-bold mb-2">
-                Какие удобства для вас важны в спортивных секциях/залах?
+                Какие удобства для вас важны в учебных заведениях?
               </p>
               <div v-if="userQuestions.length" class="input-group mb-3">
                 <base-drop-down
-                  :options="userQuestions[6].variants"
+                  :options="userQuestions[5].variants"
                   :multiselect="true"
                   :isError="isEmpty"
                   @multi="getFacilities"
@@ -268,14 +211,10 @@ export default {
       isNotSubmitted: false,
       isSubmitted: false,
       isEmpty: false,
-      gender: "",
       birthDate: "",
-      personHeight: null,
-      personWeight: null,
       city: null,
       typeSport: null,
       frequencyTrain: null,
-      timeSpendSport: null,
       buySubscription: null,
       howSpend: null,
       howWouldSpend: null,
@@ -324,15 +263,11 @@ export default {
     async submitClient() {
       try {
         if (
-          !this.gender ||
           !this.birthDate ||
-          !this.personHeight ||
-          !this.personWeight ||
           !this.howSpend ||
           !this.howWouldSpend ||
           !this.city ||
           !this.frequencyTrain ||
-          !this.timeSpendSport ||
           !this.buySubscription ||
           !this.expensiveSubs ||
           !this.typeSport.length ||
@@ -343,16 +278,12 @@ export default {
         }
         this.isLoading = true;
         await axios.post("https://cb92854.tmweb.ru/api/v1/user/post/", {
-          gender: this.gender,
           birth_date: this.birthDate,
-          height: this.personHeight,
-          weight: this.personWeight,
           spend: this.removedSpend,
           amount: this.removedSpend,
           variant: [
             this.city,
             this.frequencyTrain,
-            this.timeSpendSport,
             this.buySubscription,
             this.expensiveSubs,
             ...this.typeSport,
@@ -386,9 +317,6 @@ export default {
       this.facilities = null;
       this.phoneNumber = "";
     },
-    getGender(val) {
-      this.gender = val.id;
-    },
     getCity(val) {
       this.city = val.id;
     },
@@ -398,9 +326,6 @@ export default {
     },
     getFrequencyTrain(val) {
       this.frequencyTrain = val.id;
-    },
-    getTimeSpendSport(val) {
-      this.timeSpendSport = val.id;
     },
     getBuySubscription(val) {
       this.buySubscription = val.id;
@@ -460,7 +385,7 @@ select {
   padding: 0;
 }
 .header-form {
-  width: 100px;
+  width: 80px;
 }
 img {
   width: 100%;
@@ -497,7 +422,7 @@ label {
   font-size: 14px;
   line-height: 24px;
 }
-input[type="date"]:invalid::-webkit-datetime-edit {
+.empty {
   color: #9d9d9d;
 }
 input.border-danger::placeholder {
