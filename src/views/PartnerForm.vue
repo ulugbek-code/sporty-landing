@@ -170,6 +170,29 @@
                   default="Не выбрано"
                 ></base-drop-down>
               </div>
+              <div class="vid-btn-wrapper">
+                <template v-if="preview">
+                  <div class="preview-img">
+                    <img :src="preview" alt="" />
+                  </div>
+                  <div class="img-info">
+                    <h6>{{ imageData.name }}</h6>
+                    <p>{{ (imageData.size / 1024).toFixed(2) }} KB</p>
+                  </div>
+                </template>
+                <button :class="!imageData && isEmpty ? 'bg-danger' : ''">
+                  {{
+                    !imageData && isEmpty
+                      ? "Пожалуйста, выберите файл!"
+                      : "Выбрать файл"
+                  }}
+                </button>
+                <input
+                  type="file"
+                  accept="image/*"
+                  @change="handleImage($event)"
+                />
+              </div>
               <hr class="mt-5 mb-5 custom_hr" />
               <template v-if="partnerQuestions.length">
                 <template v-for="eaachClass in classesQty" :key="eaachClass">
@@ -246,6 +269,8 @@ export default {
       phoneNumber: "",
       gymDesc: "",
       location: "",
+      preview: "",
+      imageData: "",
       openingDate: [],
       facilities: [],
       //
@@ -294,6 +319,17 @@ export default {
     },
   },
   methods: {
+    handleImage(e) {
+      const files = e.target.files[0];
+      if (files) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          this.preview = e.target.result;
+        };
+        reader.readAsDataURL(files);
+        this.imageData = e.target.files[0];
+      }
+    },
     updateLevel(val) {
       this.levels = val;
     },
@@ -377,6 +413,8 @@ export default {
           fileData.append("image", file);
         }
 
+        // fileData.append('logo',this.imageData);
+
         fileData.append("video", this.videoFile);
         let config = {
           headers: {
@@ -455,6 +493,32 @@ export default {
 </script>
 
 <style scoped>
+.preview-img {
+  width: 120px;
+  height: 120px;
+  margin-bottom: 1rem;
+  background: rgba(65, 105, 225, 0.1);
+  padding: 4px;
+  border-radius: 10px;
+}
+.img-info {
+  position: absolute;
+  top: 40%;
+  right: -10%;
+  transform: translate(10%, -40%);
+}
+.img-info h6 {
+  font-size: 15px;
+  font-weight: bold;
+  margin-bottom: 0;
+}
+.img-info p {
+  font-size: 12px;
+}
+.preview img {
+  width: 100%;
+  display: block;
+}
 h2 {
   margin-bottom: 0;
 }
@@ -601,6 +665,33 @@ textarea.border-danger::placeholder {
 }
 .btn-more:active {
   background: #d9d9d9;
+}
+.vid-btn-wrapper {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+.vid-btn-wrapper button {
+  width: 100%;
+  border: none;
+  border-radius: 8px !important;
+  padding: 6px 3rem;
+  background: #016bd4;
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 24px;
+  cursor: pointer;
+}
+.vid-btn-wrapper input[type="file"] {
+  font-size: 0px;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  opacity: 0;
+  cursor: pointer;
 }
 @media screen and (max-width: 1200px) {
   .content-form {

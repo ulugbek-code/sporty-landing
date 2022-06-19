@@ -25,8 +25,8 @@
         </div>
       </div>
     </div>
-    <!-- hours dd -->
-    <div v-if="isHourTouched" class="hours-dd">
+    <!-- hours dd  position absolute made!-->
+    <div v-if="isHourTouched" class="hours-dd position-absolute">
       <h6>Выберите дни недели</h6>
       <div class="weekDays-selector">
         <input
