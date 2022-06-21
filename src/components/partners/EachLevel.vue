@@ -1,13 +1,10 @@
 <template>
-  <template v-if="level.id !== '111'">
-    <hr class="my-4" />
+  <template v-if="index !== 0">
+    <hr />
   </template>
   <div class="mb-3 position-relative">
     <p class="fw-bold mb-2">Уровень обучения</p>
-    <span
-      v-if="level.id !== '111'"
-      @click="delLevel(level.id)"
-      class="delete-level"
+    <span v-if="index !== 0" @click="delLevel(level.id)" class="delete-level"
       >Удалить уровень</span
     >
     <input
@@ -47,7 +44,7 @@
     <p class="fw-bold mb-2">Количество посещений в тарифе</p>
     <input
       v-model.lazy="number_students"
-      type="text"
+      type="number"
       class="form-control border"
       :class="isError && !duration ? 'border-danger' : ''"
       placeholder="Введите количество посещений"
@@ -69,7 +66,7 @@
 
 <script>
 export default {
-  props: ["level", "isError"],
+  props: ["level", "index", "isError"],
   emits: ["delLev", "updateLevel"],
   data() {
     return {
@@ -160,6 +157,12 @@ export default {
 </script>
 
 <style scoped>
+hr {
+  height: 1px;
+  margin-top: 3rem;
+  margin-bottom: 2.5rem;
+  background: #9d9d9d;
+}
 .delete-level {
   color: #ff4b55;
   position: absolute;

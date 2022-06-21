@@ -1,9 +1,11 @@
 <template>
-  <div @click="closeDateOut">
+  <div class="head-class" @click="closeDateOut">
     <div class="d-flex justify-content-between align-items-center mt-5 mb-3">
-      <h4 class="">{{ each > 1 ? `Секция ${each}` : "Регистрация секции" }}</h4>
+      <h4>
+        {{ each == "123" ? "Регистрация секции" : "Регистрация новый секции" }}
+      </h4>
       <p
-        v-if="each > 1"
+        v-if="each !== '123'"
         @click="$emit('deleteClass', each)"
         class="text-danger mb-2 delete-p"
       >
@@ -25,8 +27,7 @@
       <p class="fw-bold mb-2">С чем ассоциируется данная секция</p>
       <base-drop-down
         :options="sections"
-        :multiselect="true"
-        @multi="getFacilities"
+        @input="getFacilities"
         :isError="isError"
         default="Не выбрано"
       ></base-drop-down>
@@ -43,9 +44,10 @@
         default="Не выбрано"
       ></base-drop-down>
     </div>
-    <div class="level" v-for="level in levels" :key="level.id">
+    <div class="level" v-for="(level, idx) in levels" :key="level.id">
       <each-level
         :level="level"
+        :index="idx"
         :isError="isError"
         @del-lev="deleteLevel"
         @updateLevel="updLevel"
@@ -59,14 +61,16 @@
     <div class="mb-3">
       <button @click.stop="classVisible = !classVisible" class="btn-map2">
         Добавить расписание
-        <span
+        <!-- <span
           class="triangle mx-2"
           :class="classVisible ? 'open-t' : ''"
-        ></span>
+        ></span> -->
       </button>
       <class-date
+        :classId="each"
         :isClassTrue="classVisible"
         @close-opening="classVisible = false"
+        @changeClassDate="$emit('updateClassDate', each)"
       ></class-date>
     </div>
     <p
@@ -75,12 +79,16 @@
     >
       Фотографии секции
     </p>
-    <div class="d-flex justify-content-between mb-3">
+    <div class="d-flex mb-3">
       <image-upload @input="addImage" @r-input="removeImg"></image-upload>
+      <image-upload
+        class="mx-4"
+        @input="addImage"
+        @r-input="removeImg"
+      ></image-upload>
       <image-upload @input="addImage" @r-input="removeImg"></image-upload>
-      <image-upload @input="addImage" @r-input="removeImg"></image-upload>
-      <image-upload @input="addImage" @r-input="removeImg"></image-upload>
-      <image-upload @input="addImage" @r-input="removeImg"></image-upload>
+      <!-- <image-upload @input="addImage" @r-input="removeImg"></image-upload>
+      <image-upload @input="addImage" @r-input="removeImg"></image-upload> -->
     </div>
     <div class="input-group v-w mb-3">
       <div class="vid-btn-wrapper d-flex">
@@ -97,21 +105,21 @@
         <video
           class="w-100 my-3"
           v-show="file != ''"
-          id="video-preview"
+          :id="'video-preview' + each"
           controls
           type="video/mp4"
           :muted="file == ''"
-          autoplay
         />
       </div>
     </div>
+    <p class="fw-bold mb-2">Описание секции</p>
     <div class="input-group mb-3">
       <textarea
         v-model.lazy="classDesc"
         class="form-control border"
         :class="isError && !classDesc ? 'border-danger' : ''"
         rows="3"
-        placeholder="Описание секции"
+        placeholder="Напишите описание"
       ></textarea>
     </div>
     <div class="events" v-for="event in events" :key="event.id">
@@ -144,6 +152,7 @@ export default {
     "updateValues",
     "updateEvent",
     "updatedLvl",
+    "updateClassDate",
   ],
   components: {
     ImageUpload,
@@ -164,7 +173,7 @@ export default {
       events: [],
       levels: [
         {
-          id: "111",
+          id: "" + Date.now(),
           name: "",
           duration: "",
           status: "",
@@ -183,10 +192,11 @@ export default {
           return level;
         }
       });
-      this.$emit("updatedLvl", this.levels);
+      this.$emit("updatedLvl", { id: this.each, level: this.levels });
     },
     deleteLevel(id) {
       this.levels = this.levels.filter((event) => event.id !== id);
+      this.$emit("updatedLvl", { id: this.each, level: this.levels });
     },
     addLevel() {
       this.levels.push({
@@ -206,10 +216,11 @@ export default {
           return event;
         }
       });
-      this.$emit("updateEvent", this.events);
+      this.$emit("updateEvent", { id: this.each, event: this.events });
     },
     deleteEvent(id) {
       this.events = this.events.filter((event) => event.id !== id);
+      this.$emit("updateEvent", { id: this.each, event: this.events });
     },
     addEvent() {
       this.events.push({
@@ -227,11 +238,12 @@ export default {
       this.trainType = val.id;
     },
     getFacilities(val) {
-      let a = val.map((v) => v.id);
-      this.facilities = a;
+      // console.log(val);
+      // let a = val.map((v) => v.id);
+      this.facilities = [val.id];
     },
     previewVideo() {
-      let video = document.getElementById("video-preview");
+      let video = document.getElementById("video-preview" + this.each);
       let reader = new FileReader();
       reader.readAsDataURL(this.file);
       reader.addEventListener("load", function () {
@@ -241,11 +253,12 @@ export default {
     handleFileUpload(event) {
       if (event) {
         this.file = event.target.files[0];
-        if (Math.ceil(this.file.size / 1024) > 20480) {
-          alert("Pазмер видео больше 20 мб");
+        if (Math.ceil(this.file.size / 1024) > 30720) {
+          alert("Pазмер видео больше 30 мб");
           return;
         }
-        this.$emit("changeVid", this.file);
+        if (this.file)
+          this.$emit("changeVid", { id: this.each, video: this.file });
         this.previewVideo();
       }
     },
@@ -253,20 +266,21 @@ export default {
     addImage(val) {
       if (!val.name) return;
       this.images.push(val);
-      this.$emit("changeImg", this.images);
+      this.$emit("changeImg", { id: this.each, images: this.images });
     },
     removeImg(val) {
       this.images = this.images.filter((img) => img !== val);
-      this.$emit("changeImg", this.images);
+      this.$emit("changeImg", { id: this.each, images: this.images });
     },
     deleteVid() {
       this.file = "";
-      this.$emit("changeVid", this.file);
+      this.$emit("changeVid", { id: this.each, video: this.file });
     },
   },
   watch: {
     className(val) {
       this.$emit("updateValues", {
+        id: this.each,
         name: val,
         fac: this.facilities,
         trainTy: this.trainType,
@@ -275,6 +289,7 @@ export default {
     },
     facilities(val) {
       this.$emit("updateValues", {
+        id: this.each,
         name: this.className,
         fac: val,
         trainTy: this.trainType,
@@ -283,6 +298,7 @@ export default {
     },
     trainType(val) {
       this.$emit("updateValues", {
+        id: this.each,
         name: this.className,
         fac: this.facilities,
         trainTy: val,
@@ -291,6 +307,7 @@ export default {
     },
     classDesc(val) {
       this.$emit("updateValues", {
+        id: this.each,
         name: this.className,
         fac: this.facilities,
         trainTy: this.trainType,
@@ -302,6 +319,10 @@ export default {
 </script>
 
 <style scoped>
+.head-class {
+  margin-top: 4rem;
+  border-top: 1px solid #dee2e6;
+}
 .btn-dashed {
   width: 100%;
   color: #9d9d9d;
@@ -378,8 +399,9 @@ textarea::placeholder,
 }
 .optional {
   position: absolute;
-  right: -50%;
+  right: -40%;
   top: 6px;
+  font-size: 14px;
 }
 #confirm {
   width: 16px;
@@ -431,12 +453,12 @@ textarea.border-danger::placeholder {
 }
 @media screen and (max-width: 996px) {
   .optional {
-    right: -60%;
+    right: -50%;
   }
 }
 @media screen and (max-width: 596px) {
   .optional {
-    right: -110%;
+    right: -95%;
   }
   .btn-map2 {
     width: 100%;

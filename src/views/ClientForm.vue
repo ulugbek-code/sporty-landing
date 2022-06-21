@@ -68,7 +68,7 @@
                 ]"
               />
               <p class="fw-bold mb-2">Ваш город</p>
-              <div v-if="userQuestions.length" class="input-group mb-3">
+              <div class="input-group mb-3">
                 <base-drop-down
                   :options="userQuestions[0].variants"
                   @input="getCity"
@@ -77,9 +77,9 @@
                 ></base-drop-down>
               </div>
               <p class="fw-bold mb-2">Чему вы хотите обучиться?</p>
-              <div v-if="userQuestions.length" class="input-group mb-3">
+              <div class="input-group mb-3">
                 <base-drop-down
-                  :options="userQuestions[1].variants"
+                  :options="userQuestions[5].variants"
                   :multiselect="true"
                   @multi="getTypeSport"
                   :isError="isEmpty"
@@ -89,9 +89,9 @@
               <p class="fw-bold mb-2">
                 Как часто вы посещаете образовательные учреждения?
               </p>
-              <div v-if="userQuestions.length" class="input-group mb-3">
+              <div class="input-group mb-3">
                 <base-drop-down
-                  :options="userQuestions[2].variants"
+                  :options="userQuestions[1].variants"
                   @input="getFrequencyTrain"
                   :isError="isEmpty"
                   default="Не выбрано"
@@ -103,7 +103,7 @@
               </p>
               <div class="input-group mb-3">
                 <base-drop-down
-                  :options="userQuestions[3].variants"
+                  :options="userQuestions[2].variants"
                   @input="getBuySubscription"
                   :isError="isEmpty"
                   default="Не выбрано"
@@ -145,7 +145,7 @@
               </p>
               <div class="input-group mb-3">
                 <base-drop-down
-                  :options="userQuestions[4].variants"
+                  :options="userQuestions[3].variants"
                   @input="getExpensiveSubs"
                   :isError="isEmpty"
                   default="Не выбрано"
@@ -154,9 +154,9 @@
               <p class="fw-bold mb-2">
                 Какие удобства для вас важны в учебных заведениях?
               </p>
-              <div v-if="userQuestions.length" class="input-group mb-3">
+              <div class="input-group mb-3">
                 <base-drop-down
-                  :options="userQuestions[5].variants"
+                  :options="userQuestions[4].variants"
                   :multiselect="true"
                   :isError="isEmpty"
                   @multi="getFacilities"
@@ -277,7 +277,7 @@ export default {
           return;
         }
         this.isLoading = true;
-        await axios.post("https://cb92854.tmweb.ru/api/v1/user/post/", {
+        await axios.post("http://938943-cy98692.tmweb.ru/api/v1/user/post/", {
           birth_date: this.birthDate,
           spend: this.removedSpend,
           amount: this.removedSpend,
@@ -353,7 +353,9 @@ export default {
     },
   },
   async created() {
-    await this.$store.dispatch("getQuestions");
+    if (!this.allQuestions.length) {
+      await this.$store.dispatch("getQuestions");
+    }
   },
 };
 </script>

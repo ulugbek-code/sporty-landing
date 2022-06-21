@@ -80,4 +80,7 @@ export default {
   background: #016bd4;
   color: #fff;
 }
+.btn {
+  border-radius: 6px;
+}
 </style>

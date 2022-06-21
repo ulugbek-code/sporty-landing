@@ -26,7 +26,8 @@
 <script>
 import ClassDateHours from "./ClassDateHours.vue";
 export default {
-  props: ["isEqualTab", "week"],
+  props: ["eachId", "isEqualTab", "week"],
+  emits: ["triggerDate", "closeOpening"],
   components: {
     ClassDateHours,
   },
@@ -38,21 +39,24 @@ export default {
   computed: {
     dates() {
       return this.$store.getters.eachWeekDates.filter(
-        (day) => day.week.join() == this.week
+        (day) => day.week.join() == this.week && day.id === this.eachId
       );
     },
   },
   methods: {
     removeTime(date) {
       this.$store.commit("removeEachWeekDates", date);
+      this.$emit("triggerDate");
     },
     savingDate(val) {
       let a = {
+        id: this.eachId,
         week: [this.week],
         start_date: val.start,
         finish_date: val.finish,
       };
       this.$store.commit("getEachWeekDates", a);
+      this.$emit("triggerDate");
     },
     cancelBtn() {
       this.isDateVisible = false;

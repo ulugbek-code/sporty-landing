@@ -242,4 +242,7 @@ span.rounded-circle:hover {
 p {
   font-size: 13px;
 }
+.btn {
+  border-radius: 6px;
+}
 </style>

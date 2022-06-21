@@ -106,7 +106,7 @@
                   >
                     Часы работы
                   </p>
-                  <div>
+                  <div class="gym-width">
                     <template v-for="gym in gymHoursOpeningQty" :key="gym">
                       <gym-opening-hours
                         @minusDate="updateGymQty"
@@ -122,12 +122,13 @@
                   </button>
                 </div>
               </div>
-              <div class="input-group justify-content-between mb-3">
+              <p class="fw-bold mb-2">Адрес</p>
+              <div class="input-group address justify-content-between mb-3">
                 <div class="address-wrapper">
                   <input
                     :value="getLocation"
                     type="address"
-                    class="form-control border"
+                    class="form-control border px-2"
                     :class="
                       isEmpty && !location.length ? 'bg-danger text-light' : ''
                     "
@@ -160,16 +161,17 @@
                   placeholder="Описание зала"
                 ></textarea>
               </div>
-              <div v-if="allQuestions.length" class="mb-3">
+              <div v-if="partnerQuestions.length" class="mb-3">
                 <p class="fw-bold mb-2">Удобства</p>
                 <base-drop-down
-                  :options="allQuestions[6].variants"
+                  :options="partnerQuestions[1].variants"
                   @multi="getFac"
                   :isError="isEmpty"
                   :multiselect="true"
                   default="Не выбрано"
                 ></base-drop-down>
               </div>
+              <p class="fw-bold mb-2">Логотип заведения</p>
               <div class="vid-btn-wrapper">
                 <template v-if="preview">
                   <div class="preview-img">
@@ -193,27 +195,27 @@
                   @change="handleImage($event)"
                 />
               </div>
-              <hr class="mt-5 mb-5 custom_hr" />
               <template v-if="partnerQuestions.length">
-                <template v-for="eaachClass in classesQty" :key="eaachClass">
+                <div v-for="eachClass in classes" :key="eachClass.id">
                   <dynamic-classes
-                    :each="eaachClass"
-                    :sections="partnerQuestions[1].variants"
+                    :each="eachClass.id"
+                    :sections="partnerQuestions[0].variants"
                     :isError="isEmpty"
-                    @deleteClass="updateClass"
+                    @deleteClass="removeClass"
                     @changeImg="updateImg"
                     @changeVid="updateVid"
                     @updateValues="updateVal"
                     @updateEvent="updateEvents"
                     @updatedLvl="updateLevel"
+                    @updateClassDate="getClassDate"
                   ></dynamic-classes>
-                </template>
+                </div>
               </template>
-              <!-- <div class="input-group mb-3">
+              <div class="input-group mb-3">
                 <button @click="addClass" class="btn btn-more p-4">
                   Добавить еще секцию
                 </button>
-              </div> -->
+              </div>
               <div class="d-flex align-items-center my-5">
                 <input v-model="isConfirm" type="checkbox" id="confirm" />
                 <label
@@ -286,6 +288,20 @@ export default {
       isConfirm: false,
       gymHoursOpeningQty: [1],
       classesQty: [1],
+      classes: [
+        {
+          id: "123",
+          name: "",
+          description: "",
+          type_training: "",
+          videoFile: null,
+          facilities: [],
+          images: [],
+          events: [],
+          level: [],
+          class_date: [],
+        },
+      ],
     };
   },
   computed: {
@@ -319,6 +335,19 @@ export default {
     },
   },
   methods: {
+    getClassDate(id) {
+      const eachClassDates = this.classDates.filter((date) => date.id === id);
+      this.classes = this.classes.map((clas) => {
+        if (clas.id === id) {
+          return {
+            ...clas,
+            class_date: eachClassDates,
+          };
+        } else {
+          return clas;
+        }
+      });
+    },
     handleImage(e) {
       const files = e.target.files[0];
       if (files) {
@@ -331,10 +360,28 @@ export default {
       }
     },
     updateLevel(val) {
-      this.levels = val;
+      this.classes = this.classes.map((clas) => {
+        if (clas.id === val.id) {
+          return {
+            ...clas,
+            level: val.level,
+          };
+        } else {
+          return clas;
+        }
+      });
     },
     updateEvents(val) {
-      this.events = val;
+      this.classes = this.classes.map((clas) => {
+        if (clas.id === val.id) {
+          return {
+            ...clas,
+            events: val.event,
+          };
+        } else {
+          return clas;
+        }
+      });
     },
     getCoords(val) {
       this.location = val;
@@ -349,16 +396,50 @@ export default {
       this.openingDate.push(val);
     },
     updateVal(val) {
-      this.className = val.name;
-      this.classDesc = val.desc;
-      this.typeTraining = val.trainTy;
-      this.hashtags = val.fac;
+      this.classes = this.classes.map((clas) => {
+        if (clas.id === val.id) {
+          return {
+            ...clas,
+            id: val.id,
+            name: val.name,
+            description: val.desc,
+            facilities: val.fac,
+            type_training: val.trainTy,
+          };
+        } else {
+          return clas;
+        }
+      });
+      // this.className = val.name;
+      // this.classDesc = val.desc;
+      // this.typeTraining = val.trainTy;
+      // this.hashtags = val.fac;
     },
     updateVid(val) {
-      this.videoFile = val;
+      console.log(val);
+      this.classes = this.classes.map((clas) => {
+        if (clas.id === val.id) {
+          return {
+            ...clas,
+            videoFile: val.video,
+          };
+        } else {
+          return clas;
+        }
+      });
     },
     updateImg(val) {
-      this.images = val;
+      this.classes = this.classes.map((clas) => {
+        if (clas.id === val.id) {
+          return {
+            ...clas,
+            images: val.images,
+          };
+        } else {
+          return clas;
+        }
+      });
+      // this.images = val;
     },
     async submitPartner() {
       try {
@@ -368,14 +449,9 @@ export default {
           !this.userName ||
           !this.gymDesc ||
           !this.location.length ||
+          !this.imageData ||
           !this.openingDate.length ||
-          !this.facilities.length ||
-          !this.className ||
-          !this.classDesc ||
-          !this.typeTraining ||
-          !this.hashtags.length ||
-          !this.images.length ||
-          !this.levels.length
+          !this.facilities.length
         ) {
           this.isEmpty = true;
           return;
@@ -394,28 +470,22 @@ export default {
               facilities: this.facilities,
               opening_date: this.filteredOpeningDate,
             },
-            class: [
-              {
-                name: this.className,
-                description: this.classDesc,
-                type_training: this.typeTraining,
-                facilities: this.hashtags,
-                class_date: this.classDates,
-                level: this.levels,
-                events: this.events,
-              },
-            ],
+            class: this.classes,
           })
         );
+        fileData.append("logo", this.imageData);
 
-        for (let i = 0; i < this.images.length; i++) {
-          let file = this.images[i];
-          fileData.append("image", file);
+        for (let i = 0; i < this.classes.length; i++) {
+          for (let j = 0; j < this.classes[i].images.length; j++) {
+            let file = this.classes[i].images[j];
+            fileData.append(`image-${i}`, file);
+          }
         }
 
-        // fileData.append('logo',this.imageData);
+        for (let i = 0; i < this.classes.length; i++) {
+          fileData.append(`video-${i}`, this.classes[i].videoFile);
+        }
 
-        fileData.append("video", this.videoFile);
         let config = {
           headers: {
             "Content-Type": "multipart/form-data",
@@ -428,7 +498,7 @@ export default {
         //   config
         // );
         await axios.post(
-          "https://cb92854.tmweb.ru/api/v1/class/post/",
+          "http://938943-cy98692.tmweb.ru/api/v1/class/post/",
           fileData,
           config
         );
@@ -474,15 +544,29 @@ export default {
       );
     },
     addClass() {
-      this.classesQty.push(this.classesQty[this.classesQty.length - 1] + 1);
+      this.classes.push({
+        id: "" + Date.now(),
+        name: "",
+        description: "",
+        type_training: "",
+        videoFile: null,
+        facilities: [],
+        images: [],
+        events: [],
+        level: [],
+        class_date: [],
+      });
     },
-    updateClass(val) {
-      if (this.classesQty.length > 1)
-        this.classesQty = this.classesQty.filter((hour) => hour !== val);
+    removeClass(id) {
+      this.classes = this.classes.filter((clas) => clas.id !== id);
+      // if (this.classesQty.length > 1)
+      //   this.classesQty = this.classesQty.filter((hour) => hour !== val);
     },
   },
   async created() {
-    await this.$store.dispatch("getQuestions");
+    if (!this.allQuestions.length) {
+      await this.$store.dispatch("getQuestions");
+    }
   },
   watch: {
     isEmpty() {
@@ -493,6 +577,9 @@ export default {
 </script>
 
 <style scoped>
+.gym-width {
+  width: 70%;
+}
 .preview-img {
   width: 120px;
   height: 120px;
@@ -504,7 +591,7 @@ export default {
 .img-info {
   position: absolute;
   top: 40%;
-  right: -10%;
+  left: 70%;
   transform: translate(10%, -40%);
 }
 .img-info h6 {
@@ -516,8 +603,8 @@ export default {
   font-size: 12px;
 }
 .preview img {
+  position: relative;
   width: 100%;
-  display: block;
 }
 h2 {
   margin-bottom: 0;
@@ -602,6 +689,10 @@ textarea::placeholder,
 
 .address-wrapper {
   width: 65%;
+}
+.input-group.address input,
+.input-group.address .btn {
+  padding: 10px 0;
 }
 .same-btn-wrapper {
   width: 33.5%;
@@ -714,6 +805,9 @@ textarea.border-danger::placeholder {
   }
 }
 @media screen and (max-width: 576px) {
+  .gym-width {
+    width: 100%;
+  }
   .address-wrapper {
     flex-direction: column;
   }

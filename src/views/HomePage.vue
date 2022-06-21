@@ -7,7 +7,7 @@
     <div class="container">
       <div class="row py-4">
         <div class="col-12">
-          <div class="logo_detail">
+          <div class="logo_detail mt-2">
             <img src="../assets/white-logo.svg" alt="" />
           </div>
         </div>
@@ -171,6 +171,10 @@ button:hover {
   .man-image {
     display: none;
   } */
+  .logo_detail {
+    width: 90px;
+    margin-left: 2rem;
+  }
   .q-div {
     justify-content: flex-end;
   }
