@@ -59,8 +59,16 @@
       </button>
     </div>
     <div class="mb-3">
-      <button @click.stop="classVisible = !classVisible" class="btn-map2">
-        Добавить расписание
+      <button
+        @click.stop="classVisible = !classVisible"
+        class="btn-map2"
+        :class="!classDates.length && isError ? 'bg-danger' : ''"
+      >
+        {{
+          !classDates.length && isError
+            ? "Пожалуйста добавьте расписание!"
+            : "Добавить расписание"
+        }}
         <!-- <span
           class="triangle mx-2"
           :class="classVisible ? 'open-t' : ''"
@@ -77,7 +85,11 @@
       class="mb-2 photo-header"
       :class="isError && !images.length ? 'text-danger' : ''"
     >
-      Фотографии секции
+      {{
+        isError && !images.length
+          ? "Выберите фотографии секции!"
+          : "Фотографии секции"
+      }}
     </p>
     <div class="d-flex mb-3">
       <image-upload @input="addImage" @r-input="removeImg"></image-upload>
@@ -182,6 +194,11 @@ export default {
         },
       ],
     };
+  },
+  computed: {
+    classDates() {
+      return this.$store.getters.eachWeekDates;
+    },
   },
   methods: {
     updLevel(val) {

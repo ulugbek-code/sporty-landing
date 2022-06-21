@@ -46,7 +46,7 @@
       v-model.lazy="number_students"
       type="number"
       class="form-control border"
-      :class="isError && !duration ? 'border-danger' : ''"
+      :class="isError && !number_students ? 'border-danger' : ''"
       placeholder="Введите количество посещений"
     />
   </div>

@@ -301,22 +301,6 @@ export default {
         this.isNotSubmitted = true;
       }
     },
-    resetData() {
-      this.gender = "";
-      this.birthDate = "";
-      this.personHeight = null;
-      this.personWeight = null;
-      this.howSpend = null;
-      this.howWouldSpend = null;
-      this.city = null;
-      this.frequencyTrain = null;
-      this.timeSpendSport = null;
-      this.buySubscription = null;
-      this.expensiveSubs = null;
-      this.typeSport = null;
-      this.facilities = null;
-      this.phoneNumber = "";
-    },
     getCity(val) {
       this.city = val.id;
     },
@@ -427,6 +411,7 @@ label {
 .empty {
   color: #9d9d9d;
 }
+.empty.border-danger,
 input.border-danger::placeholder {
   color: #dc3545;
 }

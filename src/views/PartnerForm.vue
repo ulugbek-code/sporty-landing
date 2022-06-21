@@ -276,15 +276,6 @@ export default {
       openingDate: [],
       facilities: [],
       //
-      className: "",
-      classDesc: "",
-      typeTraining: "",
-      videoFile: null,
-      hashtags: [],
-      images: [],
-      events: [],
-      levels: [],
-      // classDates: [],
       isConfirm: false,
       gymHoursOpeningQty: [1],
       classesQty: [1],
@@ -410,10 +401,6 @@ export default {
           return clas;
         }
       });
-      // this.className = val.name;
-      // this.classDesc = val.desc;
-      // this.typeTraining = val.trainTy;
-      // this.hashtags = val.fac;
     },
     updateVid(val) {
       console.log(val);
@@ -439,7 +426,6 @@ export default {
           return clas;
         }
       });
-      // this.images = val;
     },
     async submitPartner() {
       try {
@@ -453,6 +439,40 @@ export default {
           !this.openingDate.length ||
           !this.facilities.length
         ) {
+          this.isEmpty = true;
+          return;
+        }
+
+        let anyEmpty = false;
+        for (let i = 0; i < this.classes.length; i++) {
+          if (
+            !this.classes[i].name ||
+            !this.classes[i].description ||
+            !this.classes[i].type_training ||
+            !this.classes[i].facilities.length ||
+            !this.classes[i].images.length ||
+            !this.classes[i].class_date.length ||
+            !this.classes[i].level.length
+          ) {
+            anyEmpty = true;
+            break;
+          } else if (this.classes[i].level.length) {
+            for (let j = 0; j < this.classes[i].level.length; j++) {
+              if (
+                !this.classes[i].level[j].name ||
+                !this.classes[i].level[j].duration ||
+                !this.classes[i].level[j].status ||
+                !this.classes[i].level[j].number_students ||
+                !this.classes[i].level[j].price
+              ) {
+                console.log(this.classes[i].level);
+                anyEmpty = true;
+                break;
+              }
+            }
+          }
+        }
+        if (anyEmpty) {
           this.isEmpty = true;
           return;
         }
