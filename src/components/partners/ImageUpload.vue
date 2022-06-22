@@ -132,18 +132,12 @@ span.float-end {
 }
 @media screen and (max-width: 768px) {
   .dropbox {
-    width: 70px;
-    height: 70px;
+    width: 80px;
+    height: 80px;
   }
   .loading {
     font-size: 12px;
     left: 4%;
-  }
-}
-@media screen and (max-width: 596px) {
-  .dropbox {
-    width: 60px;
-    height: 60px;
   }
 }
 </style>

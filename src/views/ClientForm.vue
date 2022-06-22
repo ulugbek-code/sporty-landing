@@ -45,7 +45,7 @@
         <div class="col-md-3 d-none d-md-block">
           <img src="../assets/left-bar.png" alt="" />
         </div>
-        <div class="col-md-9 px-5 pt-4">
+        <div class="col-md-9 px-3 px-md-5 pt-4">
           <div class="header-form">
             <router-link to="/">
               <img src="../assets/logo.svg" alt="" />
@@ -280,7 +280,7 @@ export default {
         await axios.post("http://938943-cy98692.tmweb.ru/api/v1/user/post/", {
           birth_date: this.birthDate,
           spend: this.removedSpend,
-          amount: this.removedSpend,
+          amount: this.removedWouldSpend,
           variant: [
             this.city,
             this.frequencyTrain,

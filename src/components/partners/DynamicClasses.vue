@@ -113,7 +113,7 @@
         <p class="optional">Не обязательно</p>
       </div>
       <div class="w-100">
-        <span @click.stop="deleteVid" class="v-delete">x</span>
+        <span v-if="file" @click.stop="deleteVid" class="v-delete">x</span>
         <video
           class="w-100 my-3"
           v-show="file != ''"
@@ -260,24 +260,24 @@ export default {
       this.facilities = [val.id];
     },
     previewVideo() {
-      let video = document.getElementById("video-preview" + this.each);
-      let reader = new FileReader();
-      reader.readAsDataURL(this.file);
-      reader.addEventListener("load", function () {
-        video.src = reader.result;
-      });
+      if (this.file) {
+        let video = document.getElementById("video-preview" + this.each);
+        let reader = new FileReader();
+        reader.readAsDataURL(this.file);
+        reader.addEventListener("load", function () {
+          video.src = reader.result;
+        });
+      }
     },
     handleFileUpload(event) {
-      if (event) {
-        this.file = event.target.files[0];
-        if (Math.ceil(this.file.size / 1024) > 30720) {
-          alert("Pазмер видео больше 30 мб");
-          return;
-        }
-        if (this.file)
-          this.$emit("changeVid", { id: this.each, video: this.file });
-        this.previewVideo();
+      this.file = event.target.files[0];
+      if (Math.ceil(this.file?.size / 1024) > 30720) {
+        alert("Pазмер видео больше 30 мб");
+        return;
       }
+      if (this.file)
+        this.$emit("changeVid", { id: this.each, video: this.file });
+      this.previewVideo();
     },
     //
     addImage(val) {

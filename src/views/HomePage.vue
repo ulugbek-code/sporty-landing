@@ -51,7 +51,7 @@ export default {};
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
+  height: 100vh;
   background: url("../assets/back.png");
   background-size: cover;
   z-index: 0;
@@ -67,9 +67,9 @@ export default {};
 } */
 section {
   position: relative;
-  overflow-x: hidden;
+  overflow: hidden;
   background: rgba(1, 1, 1, 0.7);
-  min-height: 100vh;
+  height: 100vh;
   z-index: 1;
 }
 /* .first-circle {

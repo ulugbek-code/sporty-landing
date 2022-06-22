@@ -104,7 +104,7 @@ section {
 }
 @media (max-width: 768px) {
   dialog {
-    top: 30%;
+    top: 20%;
     width: 20rem;
   }
 }

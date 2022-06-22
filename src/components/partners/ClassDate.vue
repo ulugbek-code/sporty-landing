@@ -135,7 +135,12 @@ export default {
 @media screen and (max-width: 576px) {
   .hours-dd {
     min-width: 345px;
-    left: 0;
+    left: 0%;
+  }
+}
+@media screen and (max-width: 390px) {
+  .hours-dd {
+    left: -2.5%;
   }
 }
 </style>

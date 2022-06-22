@@ -40,13 +40,13 @@
     </template>
   </base-dialog>
   <!--  -->
-  <section>
+  <section @click="triggerError">
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-3 d-none d-md-block">
           <img src="../assets/left-bar.png" alt="" />
         </div>
-        <div class="col-md-9 px-4 pt-4">
+        <div class="col-md-9 px-3 px-md-5 pt-4">
           <!-- {{ isLoad }} -->
           <div class="header-form">
             <router-link to="/">
@@ -158,7 +158,7 @@
                   class="form-control border"
                   :class="isEmpty && !gymDesc ? 'border-danger' : ''"
                   rows="3"
-                  placeholder="Описание зала"
+                  placeholder="Описание заведения"
                 ></textarea>
               </div>
               <div v-if="partnerQuestions.length" class="mb-3">
@@ -227,7 +227,7 @@
               </div>
               <div class="input-group mb-5">
                 <button
-                  @click="submitPartner"
+                  @click.stop="submitPartner"
                   class="btn btn-map p-2"
                   :disabled="!isConfirm"
                 >
@@ -326,6 +326,9 @@ export default {
     },
   },
   methods: {
+    triggerError() {
+      if (this.isEmpty) this.isEmpty = false;
+    },
     getClassDate(id) {
       const eachClassDates = this.classDates.filter((date) => date.id === id);
       this.classes = this.classes.map((clas) => {
@@ -403,7 +406,6 @@ export default {
       });
     },
     updateVid(val) {
-      console.log(val);
       this.classes = this.classes.map((clas) => {
         if (clas.id === val.id) {
           return {
@@ -588,11 +590,11 @@ export default {
       await this.$store.dispatch("getQuestions");
     }
   },
-  watch: {
-    isEmpty() {
-      setTimeout(() => (this.isEmpty = false), 2500);
-    },
-  },
+  // watch: {
+  //   isEmpty() {
+  //     setTimeout(() => (this.isEmpty = false), 2500);
+  //   },
+  // },
 };
 </script>
 
