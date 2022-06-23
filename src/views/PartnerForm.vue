@@ -8,7 +8,7 @@
       </div>
       <div class="d-grid text-center mt-5">
         <router-link to="/">
-          <button class="w-100 btn btn-primary py-2 px-5">Готова</button>
+          <button class="w-100 btn btn-primary py-2 px-5">Готово</button>
         </router-link>
       </div>
     </template>
@@ -34,7 +34,7 @@
           @click="isNotSubmitted = false"
           class="w-100 btn btn-primary py-2 px-5"
         >
-          Занова
+          Заново
         </button>
       </div>
     </template>
@@ -123,7 +123,7 @@
                 </div>
               </div>
               <p class="fw-bold mb-2">Адрес</p>
-              <div class="input-group address justify-content-between mb-3">
+              <div class="input-group justify-content-between mb-3">
                 <div class="address-wrapper">
                   <input
                     :value="getLocation"
@@ -213,7 +213,7 @@
               </template>
               <div class="input-group mb-3">
                 <button @click="addClass" class="btn btn-more p-4">
-                  Добавить еще секцию
+                  Добавить еще курс
                 </button>
               </div>
               <div class="d-flex align-items-center my-5">
@@ -712,10 +712,7 @@ textarea::placeholder,
 .address-wrapper {
   width: 65%;
 }
-.input-group.address input,
-.input-group.address .btn {
-  padding: 10px 0;
-}
+
 .same-btn-wrapper {
   width: 33.5%;
 }

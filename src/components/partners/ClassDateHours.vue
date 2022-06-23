@@ -7,7 +7,7 @@
       minute-label="минута"
       input-width="100%"
       :minute-interval="10"
-      placeholder="Дата начала"
+      placeholder="Время начала"
       close-on-complete
     ></vue-timepicker>
   </div>
@@ -19,7 +19,7 @@
       minute-label="минута"
       input-width="100%"
       :minute-interval="10"
-      placeholder="Дата окончания"
+      placeholder="Время окончания"
       close-on-complete
     ></vue-timepicker>
   </div>

@@ -2,29 +2,29 @@
   <div class="head-class" @click="closeDateOut">
     <div class="d-flex justify-content-between align-items-center mt-5 mb-3">
       <h4>
-        {{ each == "123" ? "Регистрация секции" : "Регистрация новый секции" }}
+        {{ each == "123" ? "Регистрация на курс" : "Регистрация нового курса" }}
       </h4>
       <p
         v-if="each !== '123'"
         @click="$emit('deleteClass', each)"
         class="text-danger mb-2 delete-p"
       >
-        Удалить секцию
+        Удалить курс
       </p>
     </div>
 
-    <p class="fw-bold mb-2">Название секции</p>
+    <p class="fw-bold mb-2">Название курса</p>
     <div class="input-group mb-3">
       <input
         v-model.lazy="className"
         type="text"
         class="form-control border"
         :class="isError && !className ? 'border-danger' : ''"
-        placeholder="Название секции (например: математика, английский, немецкий)"
+        placeholder="Название курса (например: математика, английский, немецкий)"
       />
     </div>
     <div class="mb-3">
-      <p class="fw-bold mb-2">С чем ассоциируется данная секция</p>
+      <p class="fw-bold mb-2">С чем ассоциируется данный курс</p>
       <base-drop-down
         :options="sections"
         @input="getFacilities"
@@ -87,8 +87,8 @@
     >
       {{
         isError && !images.length
-          ? "Выберите фотографии секции!"
-          : "Фотографии секции"
+          ? "Выберите фотографии курса!"
+          : "Фотографии курса"
       }}
     </p>
     <div class="d-flex mb-3">
@@ -124,7 +124,7 @@
         />
       </div>
     </div>
-    <p class="fw-bold mb-2">Описание секции</p>
+    <p class="fw-bold mb-2">Описание курса</p>
     <div class="input-group mb-3">
       <textarea
         v-model.lazy="classDesc"
