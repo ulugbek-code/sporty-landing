@@ -520,7 +520,7 @@ export default {
         //   config
         // );
         await axios.post(
-          "http://938943-cy98692.tmweb.ru/api/v1/class/post/",
+          "http://185.196.214.250/api/v1/class/post/",
           fileData,
           config
         );
@@ -738,37 +738,7 @@ label {
 #confirm:checked + label {
   color: #016bd4;
 }
-/*  */
-.dropbox {
-  border: 2px dashed #dee2e6;
-  border-radius: 10px;
-  width: 90px;
-  height: 90px;
-  margin-top: 10px;
-  padding: 10px 10px;
-  position: relative;
-  cursor: pointer;
-}
-.input-file {
-  opacity: 0; /* invisible but it's there! */
-  height: 100%;
-  width: 100%;
-  position: absolute;
-  left: 0%;
-  top: 0%;
-  cursor: pointer;
-  z-index: 1;
-}
-.icon {
-  font-weight: 600;
-  font-size: 36px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: #d9d9d9;
-  pointer-events: none;
-}
+
 input.border-danger::placeholder,
 textarea.border-danger::placeholder {
   color: #dc3545;

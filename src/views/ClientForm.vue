@@ -8,7 +8,7 @@
       </div>
       <div class="d-grid text-center mt-5">
         <router-link to="/">
-          <button class="w-100 btn btn-primary py-2 px-5">Готова</button>
+          <button class="w-100 btn btn-primary py-2 px-5">Готово</button>
         </router-link>
       </div>
     </template>
@@ -33,7 +33,7 @@
           @click="isNotSubmitted = false"
           class="w-100 btn btn-primary py-2 px-5"
         >
-          Занова
+          Заново
         </button>
       </div>
     </template>
@@ -70,7 +70,7 @@
               <p class="fw-bold mb-2">Ваш город</p>
               <div class="input-group mb-3">
                 <base-drop-down
-                  :options="userQuestions[0].variants"
+                  :options="userQuestions[1].variants"
                   @input="getCity"
                   :isError="isEmpty"
                   default="Не выбрано"
@@ -79,7 +79,7 @@
               <p class="fw-bold mb-2">Чему вы хотите обучиться?</p>
               <div class="input-group mb-3">
                 <base-drop-down
-                  :options="userQuestions[5].variants"
+                  :options="userQuestions[0].variants"
                   :multiselect="true"
                   @multi="getTypeSport"
                   :isError="isEmpty"
@@ -91,7 +91,7 @@
               </p>
               <div class="input-group mb-3">
                 <base-drop-down
-                  :options="userQuestions[1].variants"
+                  :options="userQuestions[2].variants"
                   @input="getFrequencyTrain"
                   :isError="isEmpty"
                   default="Не выбрано"
@@ -103,7 +103,7 @@
               </p>
               <div class="input-group mb-3">
                 <base-drop-down
-                  :options="userQuestions[2].variants"
+                  :options="userQuestions[3].variants"
                   @input="getBuySubscription"
                   :isError="isEmpty"
                   default="Не выбрано"
@@ -145,7 +145,7 @@
               </p>
               <div class="input-group mb-3">
                 <base-drop-down
-                  :options="userQuestions[3].variants"
+                  :options="userQuestions[4].variants"
                   @input="getExpensiveSubs"
                   :isError="isEmpty"
                   default="Не выбрано"
@@ -156,7 +156,7 @@
               </p>
               <div class="input-group mb-3">
                 <base-drop-down
-                  :options="userQuestions[4].variants"
+                  :options="userQuestions[5].variants"
                   :multiselect="true"
                   :isError="isEmpty"
                   @multi="getFacilities"
@@ -277,7 +277,7 @@ export default {
           return;
         }
         this.isLoading = true;
-        await axios.post("http://938943-cy98692.tmweb.ru/api/v1/user/post/", {
+        await axios.post("http://185.196.214.250/api/v1/user/post/", {
           birth_date: this.birthDate,
           spend: this.removedSpend,
           amount: this.removedWouldSpend,

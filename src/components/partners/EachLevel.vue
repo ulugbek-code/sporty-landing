@@ -43,7 +43,8 @@
   <div class="mb-3">
     <p class="fw-bold mb-2">Количество посещений в тарифе</p>
     <input
-      v-model.lazy="number_students"
+      v-model="number_students"
+      @input="convertS()"
       type="number"
       class="form-control border"
       :class="isError && !number_students ? 'border-danger' : ''"
@@ -101,6 +102,10 @@ export default {
     },
     converV() {
       if (this.duration < 0) this.duration = Math.abs(this.duration);
+    },
+    convertS() {
+      if (this.number_students < 0)
+        this.number_students = Math.abs(this.number_students);
     },
     convertP() {
       if (isNaN(this.price[0])) this.price = "";
