@@ -172,7 +172,7 @@
                 ></base-drop-down>
               </div>
               <p class="fw-bold mb-2">Логотип заведения</p>
-              <div class="vid-btn-wrapper">
+              <div class="vid-btn-wrapper mb-3">
                 <template v-if="preview">
                   <div class="preview-img">
                     <img :src="preview" alt="" />
@@ -194,6 +194,34 @@
                   accept="image/*"
                   @change="handleImage($event)"
                 />
+              </div>
+              <p
+                class="fw-bold mb-2"
+                :class="isEmpty && !partnerImages.length ? 'text-danger' : ''"
+              >
+                {{
+                  isEmpty && !partnerImages.length
+                    ? "Пожалуйста, выберите фотографии учебного центра!"
+                    : "Фотографии учебного центра"
+                }}
+              </p>
+              <div class="d-flex gap-3 mb-3">
+                <image-upload
+                  @input="addImage"
+                  @r-input="removeImg"
+                ></image-upload>
+                <image-upload
+                  @input="addImage"
+                  @r-input="removeImg"
+                ></image-upload>
+                <image-upload
+                  @input="addImage"
+                  @r-input="removeImg"
+                ></image-upload>
+                <image-upload
+                  @input="addImage"
+                  @r-input="removeImg"
+                ></image-upload>
               </div>
               <template v-if="partnerQuestions.length">
                 <div v-for="eachClass in classes" :key="eachClass.id">
@@ -247,6 +275,7 @@ import GymOpeningHours from "../components/partners/GymOpeningHours.vue";
 import DynamicClasses from "../components/partners/DynamicClasses.vue";
 import BaseDialog from "../components/BaseDialog.vue";
 import MapUzb from "../components/MapUzb.vue";
+import ImageUpload from "../components/partners/ImageUpload.vue";
 
 export default {
   components: {
@@ -254,6 +283,7 @@ export default {
     DynamicClasses,
     BaseDialog,
     MapUzb,
+    ImageUpload,
   },
   data() {
     return {
@@ -272,6 +302,7 @@ export default {
       imageData: "",
       openingDate: [],
       facilities: [],
+      partnerImages: [],
       //
       isConfirm: false,
       gymHoursOpeningQty: [1],
@@ -318,6 +349,13 @@ export default {
     },
   },
   methods: {
+    addImage(val) {
+      if (!val.name) return;
+      this.partnerImages.push(val);
+    },
+    removeImg(val) {
+      this.partnerImages = this.partnerImages.filter((img) => img !== val);
+    },
     triggerError() {
       this.$store.dispatch("changeClassDate");
       if (this.isEmpty) this.isEmpty = false;
@@ -418,7 +456,8 @@ export default {
           !this.location.length ||
           !this.imageData ||
           !this.openingDate.length ||
-          !this.facilities.length
+          !this.facilities.length ||
+          !this.partnerImages.length
         ) {
           this.isEmpty = true;
           return;
@@ -491,6 +530,10 @@ export default {
           })
         );
         fileData.append("logo", this.imageData);
+
+        for (let i = 0; i < this.partnerImages.length; i++) {
+          fileData.append("partner-image", this.partnerImages[i]);
+        }
 
         for (let i = 0; i < this.classes.length; i++) {
           for (let j = 0; j < this.classes[i].images.length; j++) {

@@ -32,7 +32,6 @@
         default="Не выбрано"
       ></base-drop-down>
     </div>
-    {{ levels }}
     <div class="level" v-for="(level, idx) in levels" :key="level.id">
       <each-level
         :level="level"
