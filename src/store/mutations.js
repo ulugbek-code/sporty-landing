@@ -1,4 +1,7 @@
 export default {
+  changeClassDate(state) {
+    state.isClassDateChanged = !state.isClassDateChanged;
+  },
   getQuestions(state, payload) {
     state.questions = payload.data;
   },

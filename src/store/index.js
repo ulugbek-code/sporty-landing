@@ -6,6 +6,7 @@ import rootGetters from "./getters.js";
 const store = createStore({
   state() {
     return {
+      isClassDateChanged: false,
       questions: [],
       eachWeekDates: [],
     };

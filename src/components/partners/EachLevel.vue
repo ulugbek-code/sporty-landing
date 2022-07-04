@@ -18,7 +18,7 @@
   <p class="fw-bold mb-2">Длительность обучения</p>
   <div class="input-group mb-3">
     <input
-      v-model.lazy="duration"
+      v-model="duration"
       type="number"
       @input="converV()"
       class="form-control border"
@@ -43,11 +43,11 @@
   <div class="mb-3">
     <p class="fw-bold mb-2">Количество посещений в тарифе</p>
     <input
-      v-model="number_students"
+      v-model="number_of_lessons"
       @input="convertS()"
       type="number"
       class="form-control border"
-      :class="isError && !number_students ? 'border-danger' : ''"
+      :class="isError && !number_of_lessons ? 'border-danger' : ''"
       placeholder="Введите количество посещений"
     />
   </div>
@@ -63,19 +63,39 @@
     />
     <span class="input-group-text">СУМ</span>
   </div>
+  <div v-for="(gr, idx) in group" :key="gr.id">
+    <each-group
+      :gr="gr"
+      :index="idx"
+      :isError="isError"
+      @updateGroup="updateGroup"
+      @delete-group="deleteGroup"
+      @sendDates="reachDates"
+    ></each-group>
+  </div>
+  <div class="input-group mb-3">
+    <button @click="addGroup" class="btn btn-dashed py-2">
+      Добавить еще группу
+    </button>
+  </div>
 </template>
 
 <script>
+import EachGroup from "./EachGroup.vue";
 export default {
   props: ["level", "index", "isError"],
-  emits: ["delLev", "updateLevel"],
+  emits: ["addGroup", "delLev", "updateLevel"],
+  components: {
+    EachGroup,
+  },
   data() {
     return {
       levelName: this.level?.name,
       duration: this.level?.duration,
       status: this.level?.status,
-      number_students: this.level?.number_students,
+      number_of_lessons: this.level?.number_of_lessons,
       price: this.level?.price,
+      group: this.level?.group,
     };
   },
   computed: {
@@ -86,6 +106,51 @@ export default {
     },
   },
   methods: {
+    reachDates(val) {
+      this.group = this.group.map((gr) => {
+        if (gr.id == val.id) {
+          return {
+            ...gr,
+            level_date: val.value,
+          };
+        } else {
+          return gr;
+        }
+      });
+      this.$emit("updateLevel", {
+        id: this.level.id,
+        name: this.levelName,
+        duration: this.duration,
+        status: this.status,
+        number_of_lessons: this.number_of_lessons,
+        price: this.removedPrice,
+        group: this.group,
+      });
+    },
+    updateGroup(val) {
+      this.group = this.group.map((gr) => {
+        if (gr.id === val.id) {
+          return val;
+        } else {
+          return gr;
+        }
+      });
+      this.$emit("updateLevel", {
+        id: this.level.id,
+        name: this.levelName,
+        duration: this.duration,
+        status: this.status,
+        number_of_lessons: this.number_of_lessons,
+        price: this.removedPrice,
+        group: this.group,
+      });
+    },
+    addGroup() {
+      this.$emit("addGroup", this.level.id);
+    },
+    deleteGroup(id) {
+      this.group = this.group.filter((gr) => gr.id !== id);
+    },
     getAge(val) {
       this.status = val.id;
       this.$emit("updateLevel", {
@@ -93,8 +158,9 @@ export default {
         name: this.levelName,
         duration: this.duration,
         status: this.status,
-        number_students: this.number_students,
+        number_of_lessons: this.number_of_lessons,
         price: this.removedPrice,
+        group: this.group,
       });
     },
     delLevel(id) {
@@ -104,8 +170,8 @@ export default {
       if (this.duration < 0) this.duration = Math.abs(this.duration);
     },
     convertS() {
-      if (this.number_students < 0)
-        this.number_students = Math.abs(this.number_students);
+      if (this.number_of_lessons < 0)
+        this.number_of_lessons = Math.abs(this.number_of_lessons);
     },
     convertP() {
       if (isNaN(this.price[0])) this.price = "";
@@ -123,8 +189,9 @@ export default {
         name: val,
         duration: this.duration,
         status: this.status,
-        number_students: this.number_students,
+        number_of_lessons: this.number_of_lessons,
         price: this.removedPrice,
+        group: this.group,
       });
     },
     duration(val) {
@@ -133,18 +200,20 @@ export default {
         name: this.levelName,
         duration: val,
         status: this.status,
-        number_students: this.number_students,
+        number_of_lessons: this.number_of_lessons,
         price: this.removedPrice,
+        group: this.group,
       });
     },
-    number_students(val) {
+    number_of_lessons(val) {
       this.$emit("updateLevel", {
         id: this.level.id,
         name: this.levelName,
         duration: this.duration,
         status: this.status,
-        number_students: val,
+        number_of_lessons: val,
         price: this.removedPrice,
+        group: this.group,
       });
     },
     price() {
@@ -153,8 +222,9 @@ export default {
         name: this.levelName,
         duration: this.duration,
         status: this.status,
-        number_students: this.number_students,
+        number_of_lessons: this.number_of_lessons,
         price: this.removedPrice,
+        group: this.group,
       });
     },
   },
@@ -191,5 +261,10 @@ textarea::placeholder {
 input.border-danger::placeholder,
 textarea.border-danger::placeholder {
   color: #dc3545;
+}
+.btn-dashed {
+  width: 100%;
+  color: #9d9d9d;
+  border: 2px dashed #dee2e6;
 }
 </style>

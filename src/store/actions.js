@@ -11,4 +11,7 @@ export default {
   resetWeeks(context) {
     context.commit("reset");
   },
+  changeClassDate(context) {
+    context.commit("changeClassDate");
+  },
 };

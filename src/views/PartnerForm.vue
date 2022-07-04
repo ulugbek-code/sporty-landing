@@ -207,7 +207,6 @@
                     @updateValues="updateVal"
                     @updateEvent="updateEvents"
                     @updatedLvl="updateLevel"
-                    @updateClassDate="getClassDate"
                   ></dynamic-classes>
                 </div>
               </template>
@@ -249,8 +248,6 @@ import DynamicClasses from "../components/partners/DynamicClasses.vue";
 import BaseDialog from "../components/BaseDialog.vue";
 import MapUzb from "../components/MapUzb.vue";
 
-// const API_KEY = "456787f4-294f-4b71-9233-05be8554dd23";
-
 export default {
   components: {
     GymOpeningHours,
@@ -284,21 +281,16 @@ export default {
           id: "123",
           name: "",
           description: "",
-          type_training: "",
           videoFile: null,
-          facilities: [],
+          category: "",
           images: [],
           events: [],
           level: [],
-          class_date: [],
         },
       ],
     };
   },
   computed: {
-    classDates() {
-      return this.$store.getters.eachWeekDates;
-    },
     filteredOpeningDate() {
       return this.openingDate.map((date) => {
         return {
@@ -327,20 +319,8 @@ export default {
   },
   methods: {
     triggerError() {
+      this.$store.dispatch("changeClassDate");
       if (this.isEmpty) this.isEmpty = false;
-    },
-    getClassDate(id) {
-      const eachClassDates = this.classDates.filter((date) => date.id === id);
-      this.classes = this.classes.map((clas) => {
-        if (clas.id === id) {
-          return {
-            ...clas,
-            class_date: eachClassDates,
-          };
-        } else {
-          return clas;
-        }
-      });
     },
     handleImage(e) {
       const files = e.target.files[0];
@@ -397,8 +377,7 @@ export default {
             id: val.id,
             name: val.name,
             description: val.desc,
-            facilities: val.fac,
-            type_training: val.trainTy,
+            category: val.fac,
           };
         } else {
           return clas;
@@ -450,10 +429,8 @@ export default {
           if (
             !this.classes[i].name ||
             !this.classes[i].description ||
-            !this.classes[i].type_training ||
-            !this.classes[i].facilities.length ||
+            !this.classes[i].category ||
             !this.classes[i].images.length ||
-            !this.classes[i].class_date.length ||
             !this.classes[i].level.length
           ) {
             anyEmpty = true;
@@ -464,12 +441,30 @@ export default {
                 !this.classes[i].level[j].name ||
                 !this.classes[i].level[j].duration ||
                 !this.classes[i].level[j].status ||
-                !this.classes[i].level[j].number_students ||
+                !this.classes[i].level[j].number_of_lessons ||
                 !this.classes[i].level[j].price
               ) {
-                console.log(this.classes[i].level);
                 anyEmpty = true;
                 break;
+              } else if (this.classes[i].level[j].group.length) {
+                for (
+                  let k = 0;
+                  k < this.classes[i].level[j].group.length;
+                  k++
+                ) {
+                  if (
+                    !this.classes[i].level[j].group[k].name ||
+                    !this.classes[i].level[j].group[k]
+                      .current_students_number ||
+                    !this.classes[i].level[j].group[k].limit ||
+                    !this.classes[i].level[j].group[k].status ||
+                    !this.classes[i].level[j].group[k].type ||
+                    !this.classes[i].level[j].group[k].level_date.length
+                  ) {
+                    anyEmpty = true;
+                    break;
+                  }
+                }
               }
             }
           }
@@ -514,11 +509,13 @@ export default {
           },
         };
         this.isLoading = true;
+
         // await axios.post(
         //   window.getEnvParam("API_BASE_URL") + "class/post/",
         //   fileData,
         //   config
         // );
+
         await axios.post(
           "http://185.196.214.250/api/v1/class/post/",
           fileData,
@@ -536,7 +533,6 @@ export default {
     getFac(val) {
       let a = val.map((v) => v.id);
       this.facilities = a;
-      // console.log(this.facilities);
     },
     formatPhoneNumber() {
       let x = this.phoneNumber
@@ -570,19 +566,15 @@ export default {
         id: "" + Date.now(),
         name: "",
         description: "",
-        type_training: "",
         videoFile: null,
-        facilities: [],
+        category: "",
         images: [],
         events: [],
         level: [],
-        class_date: [],
       });
     },
     removeClass(id) {
       this.classes = this.classes.filter((clas) => clas.id !== id);
-      // if (this.classesQty.length > 1)
-      //   this.classesQty = this.classesQty.filter((hour) => hour !== val);
     },
   },
   async created() {

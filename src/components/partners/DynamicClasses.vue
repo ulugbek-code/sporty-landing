@@ -32,18 +32,7 @@
         default="Не выбрано"
       ></base-drop-down>
     </div>
-    <div class="mb-3">
-      <p class="fw-bold mb-2">Вид занятий</p>
-      <base-drop-down
-        :options="[
-          { id: 'individual', name: 'Индивидуальные' },
-          { id: 'group', name: 'Групповые' },
-        ]"
-        @input="getTrainType"
-        :isError="isError"
-        default="Не выбрано"
-      ></base-drop-down>
-    </div>
+    {{ levels }}
     <div class="level" v-for="(level, idx) in levels" :key="level.id">
       <each-level
         :level="level"
@@ -51,35 +40,13 @@
         :isError="isError"
         @del-lev="deleteLevel"
         @updateLevel="updLevel"
+        @addGroup="addGr"
       ></each-level>
     </div>
     <div class="input-group mb-3">
       <button @click="addLevel" class="btn btn-dashed py-2">
         Добавить еще уровень
       </button>
-    </div>
-    <div class="mb-3">
-      <button
-        @click.stop="classVisible = !classVisible"
-        class="btn-map2"
-        :class="!classDates.length && isError ? 'bg-danger' : ''"
-      >
-        {{
-          !classDates.length && isError
-            ? "Пожалуйста добавьте расписание!"
-            : "Добавить расписание"
-        }}
-        <!-- <span
-          class="triangle mx-2"
-          :class="classVisible ? 'open-t' : ''"
-        ></span> -->
-      </button>
-      <class-date
-        :classId="each"
-        :isClassTrue="classVisible"
-        @close-opening="classVisible = false"
-        @changeClassDate="$emit('updateClassDate', each)"
-      ></class-date>
     </div>
     <p
       class="mb-2 photo-header"
@@ -152,7 +119,6 @@
 
 <script>
 import ImageUpload from "./ImageUpload.vue";
-import ClassDate from "./ClassDate.vue";
 import EachEvent from "./EachEvent.vue";
 import EachLevel from "./EachLevel.vue";
 export default {
@@ -164,11 +130,9 @@ export default {
     "updateValues",
     "updateEvent",
     "updatedLvl",
-    "updateClassDate",
   ],
   components: {
     ImageUpload,
-    ClassDate,
     EachEvent,
     EachLevel,
   },
@@ -176,8 +140,7 @@ export default {
     return {
       isEmpty: false,
       className: "",
-      facilities: [],
-      trainType: "",
+      facilities: "",
       classVisible: false,
       file: "",
       images: [],
@@ -189,18 +152,36 @@ export default {
           name: "",
           duration: "",
           status: "",
-          number_students: "",
+          number_of_lessons: "",
           price: "",
+          group: [
+            {
+              id: Date.now(),
+              name: "",
+              current_students_number: "",
+              limit: "",
+              status: "",
+              type: "",
+              level_date: [],
+            },
+          ],
         },
       ],
     };
   },
-  computed: {
-    classDates() {
-      return this.$store.getters.eachWeekDates;
-    },
-  },
   methods: {
+    addGr(id) {
+      let foundIndex = this.levels.findIndex((level) => level.id == id);
+      this.levels[foundIndex].group.push({
+        id: Date.now(),
+        name: "",
+        current_students_number: "",
+        limit: "",
+        status: "",
+        type: "",
+        level_date: [],
+      });
+    },
     updLevel(val) {
       this.levels = this.levels.map((level) => {
         if (level.id === val.id) {
@@ -221,8 +202,19 @@ export default {
         name: "",
         duration: "",
         status: "",
-        number_students: "",
+        number_of_lessons: "",
         price: "",
+        group: [
+          {
+            id: Date.now(),
+            name: "",
+            current_students_number: "",
+            limit: "",
+            status: "",
+            type: "",
+            level_date: [],
+          },
+        ],
       });
     },
     changeEvent(val) {
@@ -251,13 +243,8 @@ export default {
     closeDateOut() {
       if (this.classVisible) this.classVisible = false;
     },
-    getTrainType(val) {
-      this.trainType = val.id;
-    },
     getFacilities(val) {
-      // console.log(val);
-      // let a = val.map((v) => v.id);
-      this.facilities = [val.id];
+      this.facilities = val.id;
     },
     previewVideo() {
       if (this.file) {
@@ -300,7 +287,6 @@ export default {
         id: this.each,
         name: val,
         fac: this.facilities,
-        trainTy: this.trainType,
         desc: this.classDesc,
       });
     },
@@ -309,16 +295,6 @@ export default {
         id: this.each,
         name: this.className,
         fac: val,
-        trainTy: this.trainType,
-        desc: this.classDesc,
-      });
-    },
-    trainType(val) {
-      this.$emit("updateValues", {
-        id: this.each,
-        name: this.className,
-        fac: this.facilities,
-        trainTy: val,
         desc: this.classDesc,
       });
     },
@@ -374,8 +350,7 @@ export default {
   opacity: 0;
   cursor: pointer;
 }
-.btn-map,
-.btn-map2 {
+.btn-map {
   width: 100%;
   background: #016bd4;
   color: #fff;
@@ -384,6 +359,8 @@ export default {
 }
 .btn-map2 {
   width: 40%;
+  background: #016bd4;
+  color: #fff;
   border: none;
   border-radius: 8px;
   font-weight: 700;

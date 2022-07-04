@@ -1,5 +1,5 @@
 <template>
-  <yandex-map :settings="settings" :coords="coords" :zoom="10" @click="onClick">
+  <yandex-map :settings="settings" :coords="coords" :zoom="11" @click="onClick">
     <ymap-marker
       marker-id="123"
       :coords="coords"

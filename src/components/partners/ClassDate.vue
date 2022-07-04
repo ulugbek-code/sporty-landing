@@ -16,52 +16,65 @@
         :eachId="classId"
         :isEqualTab="selected === 'Пн'"
         :week="1"
-        @closeOpening="closing"
-        @triggerDate="trigDate"
+        :day="filterAllDates(1)"
+        @updateDate="changeDates"
+        @deleteDate="deleteDate"
+        @closeTab="closing"
       ></class-date-tab>
       <class-date-tab
         :eachId="classId"
         :isEqualTab="selected === 'Вт'"
         :week="2"
-        @closeOpening="closing"
-        @triggerDate="trigDate"
+        :day="filterAllDates(2)"
+        @updateDate="changeDates"
+        @deleteDate="deleteDate"
+        @closeTab="closing"
       ></class-date-tab>
       <class-date-tab
         :eachId="classId"
         :isEqualTab="selected === 'Ср'"
         :week="3"
-        @closeOpening="closing"
-        @triggerDate="trigDate"
+        :day="filterAllDates(3)"
+        @updateDate="changeDates"
+        @deleteDate="deleteDate"
+        @closeTab="closing"
       ></class-date-tab>
       <class-date-tab
         :eachId="classId"
         :isEqualTab="selected === 'Чт'"
         :week="4"
-        @closeOpening="closing"
-        @triggerDate="trigDate"
+        :day="filterAllDates(4)"
+        @updateDate="changeDates"
+        @deleteDate="deleteDate"
+        @closeTab="closing"
       ></class-date-tab>
       <class-date-tab
         :eachId="classId"
         :isEqualTab="selected === 'Пт'"
         :week="5"
-        @closeOpening="closing"
-        @triggerDate="trigDate"
+        :day="filterAllDates(5)"
+        @updateDate="changeDates"
+        @deleteDate="deleteDate"
+        @closeTab="closing"
       ></class-date-tab>
       <class-date-tab
         :eachId="classId"
         :isEqualTab="selected === 'Сб'"
         :week="6"
-        @closeOpening="closing"
-        @triggerDate="trigDate"
+        :day="filterAllDates(6)"
+        @updateDate="changeDates"
+        @deleteDate="deleteDate"
+        @closeTab="closing"
       ></class-date-tab>
       <class-date-tab
         :eachId="classId"
         :isEqualTab="selected === 'Вс'"
         :week="7"
-        @closeOpening="closing"
-        @triggerDate="trigDate"
+        :day="filterAllDates(7)"
+        @updateDate="changeDates"
+        @deleteDate="deleteDate"
+        @closeTab="closing"
       ></class-date-tab>
-      <!--  -->
     </div>
   </div>
 </template>
@@ -69,8 +82,8 @@
 <script>
 import ClassDateTab from "./ClassDateTab.vue";
 export default {
-  props: ["classId", "isClassTrue"],
-  emits: ["changeClassDate", "close-opening"],
+  props: ["all", "classId", "isClassTrue"],
+  emits: ["updateD", "delDate", "close-opening"],
   components: {
     ClassDateTab,
   },
@@ -84,8 +97,14 @@ export default {
     };
   },
   methods: {
-    trigDate() {
-      this.$emit("changeClassDate");
+    filterAllDates(day) {
+      return this.all?.find((each) => each.week[0] == day);
+    },
+    changeDates(val) {
+      this.$emit("updateD", val);
+    },
+    deleteDate(val) {
+      this.$emit("delDate", val);
     },
     closing() {
       this.$emit("close-opening");
