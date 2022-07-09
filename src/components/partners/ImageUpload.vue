@@ -25,6 +25,7 @@
 <script>
 // import axios from "axios";
 export default {
+  props: ["qty"],
   data() {
     return {
       isLoading: false,
@@ -50,7 +51,7 @@ export default {
         reader.readAsDataURL(files[0]);
 
         // this.$emit("input", this.imageData);
-        this.$emit("input", files[0]);
+        this.$emit("input", { idx: this.qty, value: files[0] });
 
         // console.log(files[0]);
         // let data = new FormData();

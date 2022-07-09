@@ -84,7 +84,7 @@
 import EachGroup from "./EachGroup.vue";
 export default {
   props: ["level", "index", "isError"],
-  emits: ["addGroup", "delLev", "updateLevel"],
+  emits: ["addGroup", "delGroup", "delLev", "updateLevel"],
   components: {
     EachGroup,
   },
@@ -150,6 +150,7 @@ export default {
     },
     deleteGroup(id) {
       this.group = this.group.filter((gr) => gr.id !== id);
+      this.$emit("delGroup", { id: this.level.id, value: this.group });
     },
     getAge(val) {
       this.status = val.id;

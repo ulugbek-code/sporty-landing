@@ -119,7 +119,7 @@ export default {
 <style scoped>
 .hours-dd {
   position: absolute;
-  left: -7%;
+  left: 0%;
   top: 8px;
   min-width: 400px;
   background: #fff;
@@ -154,7 +154,6 @@ export default {
 @media screen and (max-width: 576px) {
   .hours-dd {
     min-width: 345px;
-    left: 0%;
   }
 }
 @media screen and (max-width: 390px) {

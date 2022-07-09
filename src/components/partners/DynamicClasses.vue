@@ -40,6 +40,7 @@
         @del-lev="deleteLevel"
         @updateLevel="updLevel"
         @addGroup="addGr"
+        @delGroup="deleteGr"
       ></each-level>
     </div>
     <div class="input-group mb-3">
@@ -58,13 +59,24 @@
       }}
     </p>
     <div class="d-flex mb-3">
-      <image-upload @input="addImage" @r-input="removeImg"></image-upload>
       <image-upload
-        class="mx-4"
+        :qty="0"
         @input="addImage"
         @r-input="removeImg"
       ></image-upload>
-      <image-upload @input="addImage" @r-input="removeImg"></image-upload>
+      <image-upload
+        :qty="1"
+        class="mx-4"
+        :class="!images[0] ? 'activate' : ''"
+        @input="addImage"
+        @r-input="removeImg"
+      ></image-upload>
+      <image-upload
+        :qty="2"
+        :class="!images[1] ? 'activate' : ''"
+        @input="addImage"
+        @r-input="removeImg"
+      ></image-upload>
       <!-- <image-upload @input="addImage" @r-input="removeImg"></image-upload>
       <image-upload @input="addImage" @r-input="removeImg"></image-upload> -->
     </div>
@@ -160,6 +172,7 @@ export default {
               current_students_number: "",
               limit: "",
               status: "",
+              duration: "",
               type: "",
               level_date: [],
             },
@@ -169,6 +182,10 @@ export default {
     };
   },
   methods: {
+    deleteGr(val) {
+      let foundIndex = this.levels.findIndex((level) => level.id == val.id);
+      this.levels[foundIndex].group = val.value;
+    },
     addGr(id) {
       let foundIndex = this.levels.findIndex((level) => level.id == id);
       this.levels[foundIndex].group.push({
@@ -177,6 +194,7 @@ export default {
         current_students_number: "",
         limit: "",
         status: "",
+        duration: "",
         type: "",
         level_date: [],
       });
@@ -209,6 +227,7 @@ export default {
             name: "",
             current_students_number: "",
             limit: "",
+            duration: "",
             status: "",
             type: "",
             level_date: [],
@@ -267,8 +286,12 @@ export default {
     },
     //
     addImage(val) {
-      if (!val.name) return;
-      this.images.push(val);
+      if (!val.value?.name) return;
+      if (this.images[val.idx]) {
+        this.images[val.idx] = val.value;
+      } else {
+        this.images.push(val.value);
+      }
       this.$emit("changeImg", { id: this.each, images: this.images });
     },
     removeImg(val) {
@@ -443,6 +466,9 @@ textarea.border-danger::placeholder {
 }
 .delete-p:hover {
   color: #ec7884 !important;
+}
+.activate {
+  pointer-events: none;
 }
 @media screen and (max-width: 996px) {
   .optional {

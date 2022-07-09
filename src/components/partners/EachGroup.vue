@@ -43,6 +43,20 @@
       />
     </div>
     <div class="mb-3">
+      <p class="fw-bold mb-2">Длительность</p>
+      <div class="input-group mb-3">
+        <input
+          v-model="duration"
+          type="number"
+          @input="convertD()"
+          class="form-control border"
+          :class="isError && !duration ? 'border-danger' : ''"
+          placeholder="Длительность"
+        />
+        <span class="input-group-text">МИНУТА</span>
+      </div>
+    </div>
+    <div class="mb-3">
       <p class="fw-bold mb-2">Статус группы</p>
       <base-drop-down
         :options="[
@@ -105,6 +119,7 @@ export default {
       status: this.gr.status,
       type: this.gr.type,
       level_date: this.gr.level_date,
+      duration: this.gr.duration,
     };
   },
   computed: {
@@ -142,6 +157,9 @@ export default {
       if (this.current_students_number < 0)
         this.current_students_number = Math.abs(this.current_students_number);
     },
+    convertD() {
+      if (this.duration < 0) this.duration = Math.abs(this.duration);
+    },
     convertF() {
       if (this.limit < 0) this.limit = Math.abs(this.limit);
     },
@@ -152,6 +170,7 @@ export default {
         name: this.name,
         current_students_number: this.current_students_number,
         limit: this.limit,
+        duration: this.duration,
         status: this.status,
         type: this.type,
       });
@@ -163,6 +182,7 @@ export default {
         name: this.name,
         current_students_number: this.current_students_number,
         limit: this.limit,
+        duration: this.duration,
         status: this.status,
         type: this.type,
       });
@@ -178,6 +198,7 @@ export default {
         name: val,
         current_students_number: this.current_students_number,
         limit: this.limit,
+        duration: this.duration,
         status: this.status,
         type: this.type,
       });
@@ -188,6 +209,7 @@ export default {
         name: this.name,
         current_students_number: val,
         limit: this.limit,
+        duration: this.duration,
         status: this.status,
         type: this.type,
       });
@@ -198,6 +220,18 @@ export default {
         name: this.name,
         current_students_number: this.current_students_number,
         limit: val,
+        duration: this.duration,
+        status: this.status,
+        type: this.type,
+      });
+    },
+    duration(val) {
+      this.$emit("updateGroup", {
+        id: this.gr.id,
+        name: this.name,
+        current_students_number: this.current_students_number,
+        limit: this.limit,
+        duration: val,
         status: this.status,
         type: this.type,
       });

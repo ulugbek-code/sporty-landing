@@ -277,7 +277,7 @@ export default {
           return;
         }
         this.isLoading = true;
-        await axios.post("http://185.196.214.250/api/v1/user/post/", {
+        await axios.post("https://e-hub/api/v1/user/post/", {
           birth_date: this.birthDate,
           spend: this.removedSpend,
           amount: this.removedWouldSpend,

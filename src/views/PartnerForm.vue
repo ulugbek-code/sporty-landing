@@ -207,18 +207,25 @@
               </p>
               <div class="d-flex gap-3 mb-3">
                 <image-upload
+                  :qty="0"
                   @input="addImage"
                   @r-input="removeImg"
                 ></image-upload>
                 <image-upload
+                  :qty="1"
+                  :class="!partnerImages[0] ? 'activate' : ''"
                   @input="addImage"
                   @r-input="removeImg"
                 ></image-upload>
                 <image-upload
+                  :qty="2"
+                  :class="!partnerImages[1] ? 'activate' : ''"
                   @input="addImage"
                   @r-input="removeImg"
                 ></image-upload>
                 <image-upload
+                  :qty="3"
+                  :class="!partnerImages[2] ? 'activate' : ''"
                   @input="addImage"
                   @r-input="removeImg"
                 ></image-upload>
@@ -350,8 +357,12 @@ export default {
   },
   methods: {
     addImage(val) {
-      if (!val.name) return;
-      this.partnerImages.push(val);
+      if (!val.value?.name) return;
+      if (this.partnerImages[val.idx]) {
+        this.partnerImages[val.idx] = val.value;
+      } else {
+        this.partnerImages.push(val.value);
+      }
     },
     removeImg(val) {
       this.partnerImages = this.partnerImages.filter((img) => img !== val);
@@ -495,7 +506,8 @@ export default {
                     !this.classes[i].level[j].group[k].name ||
                     !this.classes[i].level[j].group[k]
                       .current_students_number ||
-                    !this.classes[i].level[j].group[k].limit ||
+                    !this.classes[i].level[j].group[k].limit.length == 0 ||
+                    !this.classes[i].level[j].group[k].duration ||
                     !this.classes[i].level[j].group[k].status ||
                     !this.classes[i].level[j].group[k].type ||
                     !this.classes[i].level[j].group[k].level_date.length
@@ -559,12 +571,7 @@ export default {
         //   config
         // );
 
-        await axios.post(
-          "http://185.196.214.250/api/v1/class/post/",
-          fileData,
-          config
-        );
-        this.$store.dispatch("resetWeeks");
+        await axios.post("https://e-hub/api/v1/class/post/", fileData, config);
         this.isLoading = false;
         this.isSubmitted = true;
       } catch (e) {
@@ -807,6 +814,9 @@ textarea.border-danger::placeholder {
   bottom: 0;
   opacity: 0;
   cursor: pointer;
+}
+.activate {
+  pointer-events: none;
 }
 @media screen and (max-width: 1200px) {
   .content-form {
