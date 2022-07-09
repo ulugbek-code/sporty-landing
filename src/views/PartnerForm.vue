@@ -632,6 +632,10 @@ export default {
       await this.$store.dispatch("getQuestions");
     }
   },
+  beforeRouteEnter(to, from) {
+    alert(to.fullPath);
+    alert(from.fullPath);
+  },
   // watch: {
   //   isEmpty() {
   //     setTimeout(() => (this.isEmpty = false), 2500);
